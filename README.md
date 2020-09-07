@@ -12,7 +12,7 @@ make install
 
 Make sure `iritacli` is installed and `BSNHub` is accessible.
 
-### Create key pair for service providers
+### Create key pair for service provider and consumer
 ```bash
 # set environment variable
 chain_id=test
@@ -52,7 +52,7 @@ iritacli query service bindings $service_name --chain-id $chain_id
 
 ### Start iservice daemon
 ```bash
-iservice start iservice start [chain-id] [node-uri] provider [password] bian
+iservice start iservice start [chain-id] [node-uri] provider [password] binance
 ```
 
 ### Call service
