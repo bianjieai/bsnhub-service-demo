@@ -33,12 +33,12 @@ func startCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "start",
 		Short:   "start daemon",
-		Example: `iservice start [key_name] [market]`,
-		Args:    cobra.RangeArgs(1, 2),
+		Example: `iservice start [chain-id] [node-uri] [key_name] [password] [market]`,
+		Args:    cobra.RangeArgs(4, 5),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			// set market
-			if len(args) > 1 {
-				market.MarketType = args[1]
+			if len(args) > 4 {
+				market.MarketType = args[4]
 			}
 
 			keyDao := store.NewFileDAO(keysPath)
@@ -48,15 +48,14 @@ func startCmd() *cobra.Command {
 				types.TimeoutOption(10),
 			}
 
-			cfg, err := types.NewClientConfig(NodeURI, ChainID, options...)
-			cfg.Level = "debug"
+			cfg, err := types.NewClientConfig(args[1], args[0], options...)
 			if err != nil {
 				panic(err)
 			}
 
 			baseTx := types.BaseTx{
-				From:     args[0],
-				Password: "1234567890",
+				From:     args[2],
+				Password: args[3],
 			}
 			node.Start(cfg, baseTx)
 			return nil
@@ -64,11 +63,6 @@ func startCmd() *cobra.Command {
 	}
 	return cmd
 }
-
-const (
-	NodeURI = "tcp://localhost:26657"
-	ChainID = "test"
-)
 
 var (
 	keysPath = os.ExpandEnv(filepath.Join("$HOME", ".iritacli"))

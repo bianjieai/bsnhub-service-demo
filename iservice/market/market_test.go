@@ -20,7 +20,7 @@ func TestGetMarket(t *testing.T) {
 	require.Equal(t, "", err)
 
 	// test bian
-	MarketType = "bian"
+	MarketType = "binance"
 	market = GetMarket()
 	price, err = market.GetPrice(base, quote)
 	fmt.Printf("bian %s-%s price: %v\n", base, quote, price)
