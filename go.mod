@@ -7,7 +7,6 @@ require (
 )
 
 replace (
-	github.com/bianjieai/irita-sdk-go => /Users/bianjie/github.com/bianjieai/irita-sdk-go
 	github.com/tendermint/tendermint => github.com/bianjieai/tendermint v0.33.4-irita-200703
 )
 
