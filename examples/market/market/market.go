@@ -3,8 +3,8 @@ package market
 import (
 	"math/rand"
 
-	"github.com/bianjieai/bsnhub-service-demo/iservice/market/bian"
-	"github.com/bianjieai/bsnhub-service-demo/iservice/market/huobi"
+	"github.com/bianjieai/bsnhub-service-demo/examples/market/market/bian"
+	"github.com/bianjieai/bsnhub-service-demo/examples/market/market/huobi"
 )
 
 type Market interface {

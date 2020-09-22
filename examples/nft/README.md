@@ -1,5 +1,5 @@
 # bsnhub-service-demo
-bsnhub service demo - iservice daemon for service provider
+bsnhub service demo - nftservice daemon for service provider
 
 ## Install
 ```bash
@@ -38,21 +38,21 @@ iritacli tx send $root_account $(iritacli keys show consumer --keyring-backend f
 iritacli tx admin add-roles $(iritacli keys show provider --keyring-backend file -o json | jq -r '.address') PowerUser --chain-id $chain_id -b block -y --from $root_account
 
 # define service
-iritacli tx service define --chain-id $chain_id --from provider --name $service_name --description="provide token price" --tags=price --schemas=iservice/service/service_definition.json -b block -y --keyring-backend file
+iritacli tx service define --chain-id $chain_id --from provider --name $service_name --description="provide token price" --tags=price --schemas=nftservice/service/service_definition.json -b block -y --keyring-backend file
 ```
 
 ### Create service binding
 ```bash
 # bind service
-iritacli tx service bind --chain-id $chain_id --from provider --service-name $service_name --deposit=100000point --qos=50 --pricing iservice/service/service_pricing.json -b block -y --keyring-backend file
+iritacli tx service bind --chain-id $chain_id --from provider --service-name $service_name --deposit=100000point --qos=50 --pricing nftservice/service/service_pricing.json -b block -y --keyring-backend file
 
 # qury bindings
 iritacli query service bindings $service_name --chain-id $chain_id
 ```
 
-### Start iservice daemon
+### Start nftservice daemon
 ```bash
-iservice start iservice start [chain-id] [node-uri] provider [password] binance
+nftservice start nftservice start [chain-id] [node-uri] provider [password] binance
 ```
 
 ### Call service

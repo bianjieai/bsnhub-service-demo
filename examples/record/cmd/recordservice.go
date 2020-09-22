@@ -4,8 +4,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/bianjieai/bsnhub-service-demo/iservice/market"
-	"github.com/bianjieai/bsnhub-service-demo/iservice/node"
+	"github.com/bianjieai/bsnhub-service-demo/examples/record/node"
 	"github.com/bianjieai/irita-sdk-go/types/store"
 
 	"github.com/bianjieai/irita-sdk-go/types"
@@ -24,8 +23,8 @@ func init() {
 }
 
 var rootCmd = &cobra.Command{
-	Use:          "iservice",
-	Short:        "iservice daemon",
+	Use:          "recordservice",
+	Short:        "recordservice daemon",
 	SilenceUsage: true,
 }
 
@@ -33,14 +32,9 @@ func startCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "start",
 		Short:   "start daemon",
-		Example: `iservice start [chain-id] [node-uri] [key_name] [password] [market]`,
-		Args:    cobra.RangeArgs(4, 5),
+		Example: `recordservice start [chain-id] [node-uri] [key_name] [password]`,
+		Args:    cobra.ExactArgs(4),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			// set market
-			if len(args) > 4 {
-				market.MarketType = args[4]
-			}
-
 			keyDao := store.NewFileDAO(keysPath)
 
 			options := []types.Option{
