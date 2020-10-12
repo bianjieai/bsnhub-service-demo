@@ -130,6 +130,7 @@ func bindNFT(address common.Address, caller bind.ContractCaller, transactor bind
 	if err != nil {
 		return nil, err
 	}
+
 	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
 }
 

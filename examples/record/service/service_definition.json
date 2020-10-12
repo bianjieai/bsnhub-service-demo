@@ -26,13 +26,10 @@
   "output": {
     "type": "object",
     "properties": {
-      "price": {
-        "description": "price",
-        "type": "number"
+      "record_id": {
+        "description": "id of the record",
+        "type": "string"
       }
     }
-  },
-  "error": {
-    "type": "string"
   }
 }

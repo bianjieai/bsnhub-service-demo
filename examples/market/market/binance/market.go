@@ -1,4 +1,4 @@
-package bian
+package binance
 
 import (
 	"encoding/json"
@@ -9,14 +9,14 @@ import (
 	"strings"
 )
 
-type BianMarket struct{}
+type BinanceMarket struct{}
 
 type Result struct {
 	Symbol string `json:"symbol"`
 	Price  string `json:"price"`
 }
 
-func (market BianMarket) GetPrice(base string, quote string) (price float64, error string) {
+func (market BinanceMarket) GetPrice(base string, quote string) (price float64, error string) {
 	url := fmt.Sprintf("https://api.binance.com/api/v3/ticker/price?symbol=%s",
 		strings.ToUpper(base+quote))
 	resp, err := http.Get(url)

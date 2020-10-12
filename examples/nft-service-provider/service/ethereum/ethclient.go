@@ -27,10 +27,10 @@ type EthChain struct {
 	Key         string
 	Passphrase  string
 
-	NftCoreAddr string // nft Core Extension contract address
+	NftContractAddr string // nft contract address
 
-	NftCoreABI      abi.ABI // nft Core Extension contract ABI
-	NftCoreContract *NFT    // iService Core Extension contract
+	NftContractABI abi.ABI // nft contract ABI
+	NftContract    *NFT    // nft contract
 }
 
 // NewEthChain constructs a new EthChain instance
@@ -41,11 +41,11 @@ func NewEthChain(
 	gasPrice uint64,
 	key string,
 	passphrase string,
-	nftCoreAddr string,
+	nftContractAddr string,
 ) EthChain {
-	nftCoreABI, err := ParseABI(NFTABI)
+	nftContractABI, err := ParseABI(NFTABI)
 	if err != nil {
-		common.Logger.Panicf("failed to parse iservice core abi: %s", err)
+		common.Logger.Panicf("failed to parse nft contract abi: %s", err)
 	}
 
 	client, err := ethclient.Dial(nodeRPCAddr)
@@ -53,9 +53,9 @@ func NewEthChain(
 		common.Logger.Panicf("failed to connect to %s: %s", nodeRPCAddr, err)
 	}
 
-	nftContract, err := NewNFT(ethcmn.HexToAddress(nftCoreAddr), client)
+	nftContract, err := NewNFT(ethcmn.HexToAddress(nftContractAddr), client)
 	if err != nil {
-		common.Logger.Panicf("failed to instantiate the iservice market contract: %s", err)
+		common.Logger.Panicf("failed to instantiate the nft contract: %s", err)
 	}
 
 	eth := EthChain{
@@ -66,9 +66,9 @@ func NewEthChain(
 		GasPrice:        big.NewInt(int64(gasPrice)),
 		Key:             key,
 		Passphrase:      passphrase,
-		NftCoreAddr:     nftCoreAddr,
-		NftCoreABI:      nftCoreABI,
-		NftCoreContract: nftContract,
+		NftContractAddr: nftContractAddr,
+		NftContractABI:  nftContractABI,
+		NftContract:     nftContract,
 	}
 
 	return eth
@@ -83,7 +83,7 @@ func MakeEthChain(config Config) EthChain {
 		config.GasPrice,
 		config.Key,
 		config.Passphrase,
-		config.NftCoreAddr,
+		config.NftContractAddr,
 	)
 }
 
@@ -92,28 +92,8 @@ func (ec EthChain) GetChainID() string {
 	return ec.ChainID
 }
 
-// MintNft mint a nft on ethereum
-func (ec EthChain) MintNft(to ethcmn.Address, amountToMint *big.Int, metaId string, setPrice *big.Int, isForSale bool) (string, error) {
-	auth, err := ec.buildAuthTransactor()
-	if err != nil {
-		return "", err
-	}
-
-	tx, err := ec.NftCoreContract.BatchMint(auth, to, amountToMint, metaId, setPrice, isForSale)
-	if err != nil {
-		return "", fmt.Errorf("failed to send MintWithTokenURI transaction: %s", err)
-	}
-
-	nftId, err := ec.waitForReceipt(tx, "MintWithTokenURI")
-	if err != nil {
-		return "", err
-	}
-
-	return nftId, nil
-}
-
-// buildAuthTransactor builds an authenticated transactor
-func (ec EthChain) buildAuthTransactor() (*bind.TransactOpts, error) {
+// BuildAuthTransactor builds an authenticated transactor
+func (ec EthChain) BuildAuthTransactor() (*bind.TransactOpts, error) {
 	privKey, err := crypto.HexToECDSA(ec.Key)
 	if err != nil {
 		return nil, err
@@ -145,8 +125,8 @@ func (ec EthChain) logListener(sub ethereum.Subscription, logChan chan ethtypes.
 	}
 }
 
-// waitForReceipt waits for the receipt of the given tx
-func (ec EthChain) waitForReceipt(tx *ethtypes.Transaction, name string) (string, error) {
+// WaitForReceipt waits for the receipt of the given tx
+func (ec EthChain) WaitForReceipt(tx *ethtypes.Transaction, name string) (string, error) {
 	common.Logger.Infof("%s: transaction sent to %s, hash: %s", name, ec.GetChainID(), tx.Hash().Hex())
 
 	receipt, err := bind.WaitMined(context.Background(), ec.Client, tx)
@@ -171,10 +151,11 @@ func (ec EthChain) parseLogs(logs []*ethtypes.Log) (NFTMinted, error) {
 	var nftMinted NFTMinted
 
 	for _, log := range logs {
-		err := ec.NftCoreABI.Unpack(&nftMinted, "Minted", log.Data)
+		err := ec.NftContractABI.Unpack(&nftMinted, "Minted", log.Data)
 		if err == nil {
 			return nftMinted, nil
 		}
 	}
+
 	return nftMinted, errors.New("can not find NFTMinted event in logs")
 }

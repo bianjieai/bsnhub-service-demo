@@ -17,7 +17,7 @@ type Result struct {
 	Price  string `json:"price"`
 }
 
-func (ir IrisRecord) SaveRecord(request types.Input) (recordId string, error string) {
+func (ir IrisRecord) Create(request types.Input) (recordId string, error string) {
 	recordId, err := ir.Client.Record.CreateRecord(
 		record.CreateRecordRequest{
 			Contents: request.Contents,
@@ -27,5 +27,6 @@ func (ir IrisRecord) SaveRecord(request types.Input) (recordId string, error str
 	if err != nil {
 		error = err.Error()
 	}
+
 	return
 }

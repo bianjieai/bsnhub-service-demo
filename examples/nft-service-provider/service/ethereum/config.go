@@ -1,8 +1,9 @@
 package ethereum
 
 import (
-	"github.com/bianjieai/bsnhub-service-demo/common"
 	"github.com/spf13/viper"
+
+	"github.com/bianjieai/bsnhub-service-demo/common"
 )
 
 const (
@@ -15,7 +16,7 @@ const (
 	Key         = "key"
 	Passphrase  = "passphrase"
 
-	NftCoreAddr = "nft_core_addr"
+	NftContractAddr = "nft_contract_addr"
 )
 
 // Config represents the Ethereum chain config
@@ -27,18 +28,18 @@ type Config struct {
 	Key         string `yaml:"key"`
 	Passphrase  string `yaml:"passphrase"`
 
-	NftCoreAddr string `yaml:"nft_core_addr"`
+	NftContractAddr string `yaml:"nft_contract_addr"`
 }
 
 // NewConfig constructs a new Config from viper
 func NewConfig(v *viper.Viper) Config {
 	return Config{
-		ChainID:     v.GetString(common.GetConfigKey(Prefix, ChainID)),
-		NodeRPCAddr: v.GetString(common.GetConfigKey(Prefix, NodeRPCAddr)),
-		GasLimit:    v.GetUint64(common.GetConfigKey(Prefix, GasLimit)),
-		GasPrice:    v.GetUint64(common.GetConfigKey(Prefix, GasPrice)),
-		Key:         v.GetString(common.GetConfigKey(Prefix, Key)),
-		Passphrase:  v.GetString(common.GetConfigKey(Prefix, Passphrase)),
-		NftCoreAddr: v.GetString(common.GetConfigKey(Prefix, NftCoreAddr)),
+		ChainID:         v.GetString(common.GetConfigKey(Prefix, ChainID)),
+		NodeRPCAddr:     v.GetString(common.GetConfigKey(Prefix, NodeRPCAddr)),
+		GasLimit:        v.GetUint64(common.GetConfigKey(Prefix, GasLimit)),
+		GasPrice:        v.GetUint64(common.GetConfigKey(Prefix, GasPrice)),
+		Key:             v.GetString(common.GetConfigKey(Prefix, Key)),
+		Passphrase:      v.GetString(common.GetConfigKey(Prefix, Passphrase)),
+		NftContractAddr: v.GetString(common.GetConfigKey(Prefix, NftContractAddr)),
 	}
 }

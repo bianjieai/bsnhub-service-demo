@@ -1,0 +1,8 @@
+{
+  "deposit": "10000point",
+  "pricing": {
+    "price": "1point"
+  },
+  "qos": 100,
+  "options": {}
+}

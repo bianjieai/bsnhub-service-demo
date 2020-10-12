@@ -19,11 +19,11 @@ func TestGetMarket(t *testing.T) {
 	require.NotEqual(t, float64(0), price)
 	require.Equal(t, "", err)
 
-	// test bian
+	// test binance
 	MarketType = "binance"
 	market = GetMarket()
 	price, err = market.GetPrice(base, quote)
-	fmt.Printf("bian %s-%s price: %v\n", base, quote, price)
+	fmt.Printf("binance %s-%s price: %v\n", base, quote, price)
 	require.NotEqual(t, float64(0), price)
 	require.Equal(t, "", err)
 

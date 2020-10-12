@@ -42,7 +42,7 @@ func startCmd() *cobra.Command {
 				types.TimeoutOption(10),
 			}
 
-			cfg, err := types.NewClientConfig(args[1], args[0], options...)
+			cfg, err := types.NewClientConfig(args[1], "", args[0], options...)
 			if err != nil {
 				panic(err)
 			}

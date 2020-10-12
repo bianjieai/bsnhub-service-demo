@@ -8,7 +8,6 @@ import (
 
 const (
 	DefaultConfigFileName = "./config/config.yaml"
-	ConfigKeyAppChainName = "base.app_chain_name"
 )
 
 // LoadYAMLConfig loads the YAML config file

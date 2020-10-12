@@ -3,7 +3,7 @@ package market
 import (
 	"math/rand"
 
-	"github.com/bianjieai/bsnhub-service-demo/examples/market/market/bian"
+	"github.com/bianjieai/bsnhub-service-demo/examples/market/market/binance"
 	"github.com/bianjieai/bsnhub-service-demo/examples/market/market/huobi"
 )
 
@@ -25,7 +25,7 @@ func GetMarket() Market {
 	case "huobi":
 		return huobi.HuobiMarket{}
 	case "binance":
-		return bian.BianMarket{}
+		return binance.BinanceMarket{}
 	default:
 		return RandomMarket{}
 	}
