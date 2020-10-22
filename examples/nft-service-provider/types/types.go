@@ -1,8 +1,6 @@
 package types
 
 import (
-	"math/big"
-
 	ethcmn "github.com/ethereum/go-ethereum/common"
 )
 
@@ -13,17 +11,17 @@ const (
 type Input struct {
 	ABIEncoded   string         `json:"abi_encoded"`
 	To           ethcmn.Address `json:"to"`
-	AmountToMint *big.Int       `json:"amount_to_mint"`
+	AmountToMint string         `json:"amount_to_mint"`
 	MetaID       string         `json:"meta_id"`
-	SetPrice     *big.Int       `json:"set_price"`
+	SetPrice     string         `json:"set_price"`
 	IsForSale    bool           `json:"is_for_sale"`
 }
 
 type RawInput struct {
 	To           ethcmn.Address `json:"to"`
-	AmountToMint *big.Int       `json:"amount_to_mint"`
+	AmountToMint string         `json:"amount_to_mint"`
 	MetaID       string         `json:"meta_id"`
-	SetPrice     *big.Int       `json:"set_price"`
+	SetPrice     string         `json:"set_price"`
 	IsForSale    bool           `json:"is_for_sale"`
 }
 

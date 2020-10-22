@@ -7,6 +7,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"github.com/tidwall/gjson"
 
 	ethcmn "github.com/ethereum/go-ethereum/common"
 
@@ -62,8 +63,8 @@ func (s Service) MintNft(
 }
 
 // Callback implements the iservice.RespondCallback interface
-func (s Service) Callback(reqCtxID, reqID, input string) (result string, output string) {
-	s.Logger.Infof("service request received, request context id: %s, request id: %s", reqCtxID, reqID)
+func (s Service) Callback(reqCtxID, reqID, input string) (output string, result string) {
+	s.Logger.Infof("service request received, request id: %s, input: %s", reqID, input)
 
 	res := &types.Result{
 		Code: 200,
@@ -77,17 +78,19 @@ func (s Service) Callback(reqCtxID, reqID, input string) (result string, output 
 
 		if res.Code == 200 {
 			outputBz, _ := json.Marshal(types.Output{NftID: nftID})
-			output = string(outputBz)
+			output = fmt.Sprintf(`{"header":{},"body":%s}`, outputBz)
 		}
 
 		s.Logger.Infof("request processed, result: %s, output: %s", result, output)
 	}()
 
+	input = gjson.Get(input, "body").String()
+
 	var request types.Input
 	err := json.Unmarshal([]byte(input), &request)
 	if err != nil {
 		res.Code = 400
-		res.Message = fmt.Sprintf("can not parse request [%s] input json string : %s", reqID, err.Error())
+		res.Message = fmt.Sprintf("can not parse request [%s] input: %s", reqID, err.Error())
 
 		return
 	}
@@ -110,12 +113,30 @@ func (s Service) Callback(reqCtxID, reqID, input string) (result string, output 
 		request.IsForSale = rawRequest.IsForSale
 	}
 
+	amount := new(big.Int)
+	amount, ok := amount.SetString(request.AmountToMint, 10)
+	if !ok {
+		res.Code = 400
+		res.Message = fmt.Sprintf("failed to parse amount to big.Int")
+
+		return
+	}
+
+	setPrice := new(big.Int)
+	setPrice, ok = setPrice.SetString(request.SetPrice, 10)
+	if !ok {
+		res.Code = 400
+		res.Message = fmt.Sprintf("failed to parse set price to big.Int")
+
+		return
+	}
+
 	// mint nft
 	nftID, err = s.MintNft(
 		request.To,
-		request.AmountToMint,
+		amount,
 		request.MetaID,
-		request.SetPrice,
+		setPrice,
 		request.IsForSale,
 	)
 	if err != nil {
@@ -123,5 +144,5 @@ func (s Service) Callback(reqCtxID, reqID, input string) (result string, output 
 		res.Message = err.Error()
 	}
 
-	return result, output
+	return output, result
 }

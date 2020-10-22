@@ -1,6 +1,8 @@
 module github.com/bianjieai/bsnhub-service-demo
 
 require (
+	github.com/FISCO-BCOS/go-sdk v0.10.0
+	github.com/Workiva/go-datastructures v1.0.52
 	github.com/bianjieai/irita-sdk-go v1.1.0
 	github.com/ethereum/go-ethereum v1.9.18
 	github.com/irisnet/service-sdk-go v0.0.0-00010101000000-000000000000
@@ -9,6 +11,7 @@ require (
 	github.com/spf13/viper v1.7.1
 	github.com/stretchr/testify v1.6.1
 	github.com/tendermint/tendermint v0.33.8 // indirect
+	github.com/tidwall/gjson v1.6.1
 )
 
 replace (

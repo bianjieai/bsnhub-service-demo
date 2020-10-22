@@ -19,12 +19,12 @@
         "type": "string"
       },
       "set_price": {
-        "description": "price",
+        "description": "price in eth",
         "type": "string"
       },
       "is_for_sale": {
         "description": "whether or not the minted NFT is for sale",
-        "type": "bool"
+        "type": "boolean"
       }
     }
   },

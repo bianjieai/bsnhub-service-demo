@@ -15,7 +15,7 @@ import (
 var (
 	defaultChainID       = "irita-hub"
 	defaultNodeRPCAddr   = "http://127.0.0.1:26657"
-	defaultNodeGRPCAddr  = "http://127.0.0.1:9090"
+	defaultNodeGRPCAddr  = "127.0.0.1:9090"
 	defaultKeyPath       = os.ExpandEnv(filepath.Join("$HOME", ".iritacli"))
 	defaultGas           = uint64(200000)
 	defaultFee           = "4point"

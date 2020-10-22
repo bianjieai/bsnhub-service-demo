@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
 
 	"github.com/spf13/cobra"
 
@@ -91,8 +92,8 @@ func KeysShowCmd() *cobra.Command {
 // KeysImportCmd implements the keys import command
 func KeysImportCmd() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "import [name] [passphrase] [key-armor] [config-file]",
-		Short: "Import a key from the private key armor",
+		Use:   "import [name] [passphrase] [key-file] [config-file]",
+		Short: "Import a key from the private key armor file",
 		Args:  cobra.RangeArgs(3, 4),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			configFileName := ""
@@ -100,7 +101,7 @@ func KeysImportCmd() *cobra.Command {
 			if len(args) == 3 {
 				configFileName = common.DefaultConfigFileName
 			} else {
-				configFileName = args[2]
+				configFileName = args[3]
 			}
 
 			config, err := common.LoadYAMLConfig(configFileName)
@@ -108,9 +109,14 @@ func KeysImportCmd() *cobra.Command {
 				return err
 			}
 
+			keyArmor, err := ioutil.ReadFile(args[2])
+			if err != nil {
+				return err
+			}
+
 			iserviceClient := iservice.MakeServiceClientWrapper(iservice.NewConfig(config))
 
-			addr, err := iserviceClient.ImportKey(args[0], args[1], args[2])
+			addr, err := iserviceClient.ImportKey(args[0], args[1], string(keyArmor))
 			if err != nil {
 				return err
 			}

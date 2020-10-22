@@ -9,8 +9,9 @@ import (
 
 // ServiceClientWrapper defines a wrapper for service client
 type ServiceClientWrapper struct {
-	ChainID     string
-	NodeRPCAddr string
+	ChainID      string
+	NodeRPCAddr  string
+	NodeGRPCAddr string
 
 	KeyPath    string
 	KeyName    string
@@ -44,11 +45,17 @@ func NewServiceClientWrapper(
 		keyPath = defaultKeyPath
 	}
 
+	fee, err := types.ParseDecCoins(defaultFee)
+	if err != nil {
+		panic(err)
+	}
+
 	config := types.ClientConfig{
 		NodeURI:  nodeRPCAddr,
 		GRPCAddr: nodeGRPCAddr,
 		ChainID:  chainID,
 		Gas:      defaultGas,
+		Fee:      fee,
 		Mode:     defaultBroadcastMode,
 		Algo:     defaultKeyAlgorithm,
 		KeyDAO:   store.NewFileDAO(keyPath),
@@ -57,6 +64,7 @@ func NewServiceClientWrapper(
 	wrapper := ServiceClientWrapper{
 		ChainID:       chainID,
 		NodeRPCAddr:   nodeRPCAddr,
+		NodeGRPCAddr:  nodeGRPCAddr,
 		KeyPath:       keyPath,
 		KeyName:       keyName,
 		Passphrase:    passphrase,
@@ -88,22 +96,53 @@ func (s ServiceClientWrapper) SubscribeServiceRequest(serviceName string, cb ser
 func (s ServiceClientWrapper) DefineService(
 	serviceName string,
 	description string,
+	authorDescription string,
 	tags []string,
 	schemas string,
 ) error {
-	// TODO
-	return nil
+	request := service.DefineServiceRequest{
+		ServiceName:       serviceName,
+		Description:       description,
+		AuthorDescription: authorDescription,
+		Tags:              tags,
+		Schemas:           schemas,
+	}
+
+	_, err := s.ServiceClient.DefineService(request, s.BuildBaseTx())
+
+	return err
 }
 
 // BindService wraps iservice.BindService
 func (s ServiceClientWrapper) BindService(
 	serviceName string,
-	deposit types.Coins,
+	deposit string,
 	pricing string,
+	options string,
 	qos uint64,
 ) error {
-	// TODO
-	return nil
+	depositCoins, err := types.ParseDecCoins(deposit)
+	if err != nil {
+		return err
+	}
+
+	provider, err := s.ShowKey(s.KeyName, s.Passphrase)
+	if err != nil {
+		return err
+	}
+
+	request := service.BindServiceRequest{
+		ServiceName: serviceName,
+		Deposit:     depositCoins,
+		Pricing:     pricing,
+		Options:     options,
+		QoS:         qos,
+		Provider:    provider,
+	}
+
+	_, err = s.ServiceClient.BindService(request, s.BuildBaseTx())
+
+	return err
 }
 
 // BuildBaseTx builds a base tx
