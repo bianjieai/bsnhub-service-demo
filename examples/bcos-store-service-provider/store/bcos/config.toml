@@ -1,0 +1,17 @@
+[Network]
+#type rpc or channel
+Type="channel"
+CAFile=".keys/bcos/ca.crt"
+Cert=".keys/bcos/sdk.crt"
+Key=".keys/bcos/sdk.key"
+[[Network.Connection]]
+NodeURL="60.247.61.162:20200"
+GroupID=1
+
+[Account]
+# only support PEM format for now
+KeyFile="/Users/bianjie/develop/bcossdk/go-sdk/.ci/sm2p256v1_0x791a0073e6dfd9dc5e5061aebc43ab4f7aa4ae8b.pem"
+
+[Chain]
+ChainID=1
+SMCrypto=true

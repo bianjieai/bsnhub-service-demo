@@ -3,11 +3,11 @@
     "type": "object",
     "properties": {
       "base": {
-        "description": "base token denom",
+        "description": "base token symbol",
         "type": "string"
       },
       "quote": {
-        "description": "quote token denom",
+        "description": "quote token symbol",
         "type": "string"
       }
     }
@@ -20,8 +20,5 @@
         "type": "number"
       }
     }
-  },
-  "error": {
-    "type": "string"
   }
 }

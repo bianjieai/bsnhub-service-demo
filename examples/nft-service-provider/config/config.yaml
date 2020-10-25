@@ -1,0 +1,18 @@
+# iservice config
+iservice:
+  chain_id: irita-hub
+  node_rpc_addr: http://127.0.0.1:26657
+  node_grpc_addr: 127.0.0.1:9090
+  key_path: .keys
+  key_name: provider
+  passphrase: 12345678
+
+# ethereum config
+eth:
+  chain_id: rinkeby
+  node_rpc_addr: wss://rinkeby.infura.io/ws/v3/e89ea77dea8c4a1b85eefa1b175ddbff
+  gas_limit: 5000000
+  gas_price: 5000000000
+  key: 9cdc9b36e8630f4233532e3df8c553929ead0b527b3e9cf892e4a41bd017d786
+  passphrase: 123456789
+  nft_contract_addr: 0x6a38659237feedd73c333a1e5ce8535542f14ab8

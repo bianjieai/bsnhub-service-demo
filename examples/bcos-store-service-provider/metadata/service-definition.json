@@ -1,0 +1,20 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "value": {
+        "description": "value to be stored",
+        "type": "string"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "key": {
+        "description": "key of the stored value",
+        "type": "string"
+      }
+    }
+  }
+}

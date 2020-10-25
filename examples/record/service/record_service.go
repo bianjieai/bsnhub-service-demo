@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"fmt"
+
 	"github.com/bianjieai/bsnhub-service-demo/examples/record/record/irishub"
 	"github.com/bianjieai/bsnhub-service-demo/examples/record/types"
 
@@ -34,8 +35,8 @@ func recordService(reqCtxID, reqID, input string) (output string, result string)
 		res.Message = fmt.Sprintf("can not parse request [%s] input json string : %s", reqID, err.Error())
 	}
 
-	// save record
-	recordId, errMsg := irishub.IrisRecord{}.SaveRecord(request)
+	// create record
+	recordId, errMsg := irishub.IrisRecord{}.Create(request)
 
 	if len(errMsg) > 0 {
 		res.Code = 500

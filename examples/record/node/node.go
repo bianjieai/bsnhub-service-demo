@@ -3,7 +3,6 @@ package node
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/record/service"
 	sdk "github.com/bianjieai/irita-sdk-go"
@@ -12,7 +11,7 @@ import (
 
 func Start(config types.ClientConfig, baseTx types.BaseTx) {
 	client := sdk.NewIRITAClient(config)
-	client.SetOutput(os.Stdout)
+	// client.SetOutput(os.Stdout)
 	serviceName := service.RecordServiceName
 	baseTx.Memo = fmt.Sprintf("service invocation response for %s", serviceName)
 	_, err := client.Service.SubscribeServiceRequest(
