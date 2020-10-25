@@ -1,12 +1,17 @@
 package store
 
 import (
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"strings"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
+
+	"github.com/FISCO-BCOS/go-sdk/abi"
+	bcostypes "github.com/FISCO-BCOS/go-sdk/core/types"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-store-service-provider/store/bcos"
 	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-store-service-provider/types"
@@ -37,17 +42,14 @@ func MakeStoreService(config *viper.Viper) StoreService {
 func (s StoreService) Store(
 	value string,
 ) (string, error) {
-	tx, _, err := s.BCOSClient.StoreSession.Set(value)
+	tx, receipt, err := s.BCOSClient.StoreSession.Set(value)
 	if err != nil {
 		return "", fmt.Errorf("failed to send Store transaction: %s", err)
 	}
 
-	receipt, err := s.BCOSClient.WaitForReceipt(tx, "Store")
-	if err != nil {
-		return "", err
-	}
+	s.Logger.Infof("Store transaction succeeded, tx hash: %s", tx.Hash().Hex())
 
-	return receipt.BlockHash, nil
+	return s.parseKey(receipt)
 }
 
 // Callback implements the iservice.RespondCallback interface
@@ -91,4 +93,24 @@ func (s StoreService) Callback(reqCtxID, reqID, input string) (output string, re
 	}
 
 	return output, result
+}
+
+func (s StoreService) parseKey(receipt *bcostypes.Receipt) (string, error) {
+	parsed, err := abi.JSON(strings.NewReader(bcos.StoreABI))
+	if err != nil {
+		return "", fmt.Errorf("parse ABI failed, err: %s", err)
+	}
+
+	data, err := hex.DecodeString(receipt.Logs[0].Data[2:])
+	if err != nil {
+		return "", fmt.Errorf("decode receipt.Logs[0].Data failed, err: %s", err)
+	}
+
+	var setEvent bcos.StoreSet
+	err = parsed.Unpack(&setEvent, "Set", data)
+	if err != nil {
+		return "", fmt.Errorf("unpack Set failed, err: %s", err)
+	}
+
+	return hex.EncodeToString(setEvent.Key[:]), nil
 }

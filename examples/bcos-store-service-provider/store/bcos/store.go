@@ -31,7 +31,7 @@ var (
 const StoreABI = "[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"bytes32\",\"name\":\"key\",\"type\":\"bytes32\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"Set\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"string\",\"name\":\"value\",\"type\":\"string\"}],\"name\":\"set\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"name\":\"store\",\"outputs\":[{\"internalType\":\"string\",\"name\":\"\",\"type\":\"string\"}],\"stateMutability\":\"view\",\"type\":\"function\"}]"
 
 // StoreBin is the compiled bytecode used for deploying new contracts.
-var StoreBin = "0x608060405234801561001057600080fd5b50610400806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80634ed3885e1461003b578063654cf88c146100b4575b600080fd5b6100b26004803603602081101561005157600080fd5b810190808035906020019064010000000081111561006e57600080fd5b82018360208201111561008057600080fd5b803590602001918460018302840111640100000000831117156100a257600080fd5b909192939192939050505061015b565b005b6100e0600480360360208110156100ca57600080fd5b81019080803590602001909291905050506101f9565b6040518080602001828103825283818151815260200191508051906020019080838360005b83811015610120578082015181840152602081019050610105565b50505050905090810190601f16801561014d5780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b60006101656102a9565b905082826000808481526020019081526020016000209190610188929190610325565b507fc664efa026b4ec93a75df843ec1e56838c5932a79b631b0b759b345f431a441a81848460405180848152602001806020018281038252848482818152602001925080828437600081840152601f19601f82011690508083019250505094505050505060405180910390a1505050565b60006020528060005260406000206000915090508054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156102a15780601f10610276576101008083540402835291602001916102a1565b820191906000526020600020905b81548152906001019060200180831161028457829003601f168201915b505050505081565b60008030600154604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b815260140182815260200192505050604051602081830303815290604052805190602001209050600180600082825401925050819055508091505090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061036657803560ff1916838001178555610394565b82800160010185558215610394579182015b82811115610393578235825591602001919060010190610378565b5b5090506103a191906103a5565b5090565b6103c791905b808211156103c35760008160009055506001016103ab565b5090565b9056fea264697066735822122082700358e9965ea6e9eceeee22dadc5b5487309028eb266ef021f5389cc9b92b64736f6c634300060a0033"
+var StoreBin = "0x608060405234801561001057600080fd5b50610400806100206000396000f3fe608060405234801561001057600080fd5b50600436106100365760003560e01c80631dd6728f1461003b5780633590b49f146100e2575b600080fd5b6100676004803603602081101561005157600080fd5b810190808035906020019092919050505061015b565b6040518080602001828103825283818151815260200191508051906020019080838360005b838110156100a757808201518184015260208101905061008c565b50505050905090810190601f1680156100d45780820380516001836020036101000a031916815260200191505b509250505060405180910390f35b610159600480360360208110156100f857600080fd5b810190808035906020019064010000000081111561011557600080fd5b82018360208201111561012757600080fd5b8035906020019184600183028401116401000000008311171561014957600080fd5b909192939192939050505061020b565b005b60006020528060005260406000206000915090508054600181600116156101000203166002900480601f0160208091040260200160405190810160405280929190818152602001828054600181600116156101000203166002900480156102035780601f106101d857610100808354040283529160200191610203565b820191906000526020600020905b8154815290600101906020018083116101e657829003601f168201915b505050505081565b60006102156102a9565b905082826000808481526020019081526020016000209190610238929190610325565b507fdb95fb276e0954c43831fb01b85ce465e414ac32625ec7494ed7fc651857425a81848460405180848152602001806020018281038252848482818152602001925080828437600081840152601f19601f82011690508083019250505094505050505060405180910390a1505050565b60008030600154604051602001808373ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff1660601b815260140182815260200192505050604051602081830303815290604052805190602001209050600180600082825401925050819055508091505090565b828054600181600116156101000203166002900490600052602060002090601f016020900481019282601f1061036657803560ff1916838001178555610394565b82800160010185558215610394579182015b82811115610393578235825591602001919060010190610378565b5b5090506103a191906103a5565b5090565b6103c791905b808211156103c35760008160009055506001016103ab565b5090565b9056fea2646970667358221220cc9efada0e20db004ecbc962d8ede83a64374d5e818db8896dcd8d58a776f3ac64736f6c634300060a0033"
 
 // DeployStore deploys a new contract, binding an instance of Store to it.
 func DeployStore(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Store, error) {
@@ -202,7 +202,7 @@ func (_Store *StoreTransactorRaw) Transact(opts *bind.TransactOpts, method strin
 	return _Store.Contract.contract.Transact(opts, method, params...)
 }
 
-// Store is a free data retrieval call binding the contract method 0x654cf88c.
+// Store is a free data retrieval call binding the contract method 0x1dd6728f.
 //
 // Solidity: function store(bytes32 ) constant returns(string)
 func (_Store *StoreCaller) Store(opts *bind.CallOpts, arg0 [32]byte) (string, error) {
@@ -214,21 +214,21 @@ func (_Store *StoreCaller) Store(opts *bind.CallOpts, arg0 [32]byte) (string, er
 	return *ret0, err
 }
 
-// Store is a free data retrieval call binding the contract method 0x654cf88c.
+// Store is a free data retrieval call binding the contract method 0x1dd6728f.
 //
 // Solidity: function store(bytes32 ) constant returns(string)
 func (_Store *StoreSession) Store(arg0 [32]byte) (string, error) {
 	return _Store.Contract.Store(&_Store.CallOpts, arg0)
 }
 
-// Store is a free data retrieval call binding the contract method 0x654cf88c.
+// Store is a free data retrieval call binding the contract method 0x1dd6728f.
 //
 // Solidity: function store(bytes32 ) constant returns(string)
 func (_Store *StoreCallerSession) Store(arg0 [32]byte) (string, error) {
 	return _Store.Contract.Store(&_Store.CallOpts, arg0)
 }
 
-// Set is a paid mutator transaction binding the contract method 0x4ed3885e.
+// Set is a paid mutator transaction binding the contract method 0x3590b49f.
 //
 // Solidity: function set(string value) returns()
 func (_Store *StoreTransactor) Set(opts *bind.TransactOpts, value string) (*types.Transaction, *types.Receipt, error) {
@@ -239,7 +239,7 @@ func (_Store *StoreTransactor) AsyncSet(handler func(*types.Receipt, error), opt
 	return _Store.contract.AsyncTransact(opts, handler, "set", value)
 }
 
-// Set is a paid mutator transaction binding the contract method 0x4ed3885e.
+// Set is a paid mutator transaction binding the contract method 0x3590b49f.
 //
 // Solidity: function set(string value) returns()
 func (_Store *StoreSession) Set(value string) (*types.Transaction, *types.Receipt, error) {
@@ -250,7 +250,7 @@ func (_Store *StoreSession) AsyncSet(handler func(*types.Receipt, error), value 
 	return _Store.Contract.AsyncSet(handler, &_Store.TransactOpts, value)
 }
 
-// Set is a paid mutator transaction binding the contract method 0x4ed3885e.
+// Set is a paid mutator transaction binding the contract method 0x3590b49f.
 //
 // Solidity: function set(string value) returns()
 func (_Store *StoreTransactorSession) Set(value string) (*types.Transaction, *types.Receipt, error) {
@@ -335,7 +335,7 @@ type StoreSet struct {
 	Raw   types.Log // Blockchain specific contextual infos
 }
 
-// FilterSet is a free log retrieval operation binding the contract event 0xc664efa026b4ec93a75df843ec1e56838c5932a79b631b0b759b345f431a441a.
+// FilterSet is a free log retrieval operation binding the contract event 0x00000000000000000000000000000000000000000000000000000000db95fb27.
 //
 // Solidity: event Set(bytes32 key, string value)
 func (_Store *StoreFilterer) FilterSet(opts *bind.FilterOpts) (*StoreSetIterator, error) {
@@ -347,7 +347,7 @@ func (_Store *StoreFilterer) FilterSet(opts *bind.FilterOpts) (*StoreSetIterator
 	return &StoreSetIterator{contract: _Store.contract, event: "Set", logs: logs, sub: sub}, nil
 }
 
-// WatchSet is a free log subscription operation binding the contract event 0xc664efa026b4ec93a75df843ec1e56838c5932a79b631b0b759b345f431a441a.
+// WatchSet is a free log subscription operation binding the contract event 0x00000000000000000000000000000000000000000000000000000000db95fb27.
 //
 // Solidity: event Set(bytes32 key, string value)
 func (_Store *StoreFilterer) WatchSet(opts *bind.WatchOpts, sink chan<- *StoreSet) (event.Subscription, error) {
@@ -384,7 +384,7 @@ func (_Store *StoreFilterer) WatchSet(opts *bind.WatchOpts, sink chan<- *StoreSe
 	}), nil
 }
 
-// ParseSet is a log parse operation binding the contract event 0xc664efa026b4ec93a75df843ec1e56838c5932a79b631b0b759b345f431a441a.
+// ParseSet is a log parse operation binding the contract event 0x00000000000000000000000000000000000000000000000000000000db95fb27.
 //
 // Solidity: event Set(bytes32 key, string value)
 func (_Store *StoreFilterer) ParseSet(log types.Log) (*StoreSet, error) {

@@ -10,4 +10,4 @@ iservice:
 # bcos config
 bcos:
   config_file: ./store/bcos/config.toml
-  store_contract_addr: 0xf5b0d00f87781fa36f00a8f0ea8e8d4290416659
+  store_contract_addr: 0x725b8530a93630A9E2a8f5B720b7835E992e59B6
