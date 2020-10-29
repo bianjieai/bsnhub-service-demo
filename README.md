@@ -1,69 +1,59 @@
-# bsnhub-service-demo
-bsnhub service demo - iservice daemon for service provider
+# BSNHub Service Provider Examples
 
-## Install
+Example service provider daemons for BSNHub.
+
+## Get Started
+
+Every example is a complete project.
+
+You can enter any example directory for the following instructions.
+
+### Install
+
 ```bash
 make install
 ```
 
-## Run
+### Configure
 
-### Precondition
+Configuration is required to start the service provider daemon.
 
-Make sure `iritacli` is installed and `BSNHub` is accessible.
+The default config lies in `./config/config.yaml`. The config items can be modified by demand.
 
-### Create key pair for service provider and consumer
+### key Management
+
+The key needs to be provided to interact with BSNHub.
+
+The `keys` command is intended for key management.
+
 ```bash
-# set environment variable
-chain_id=test
-service_name=price_service
-root_account=<your root account>
+<service-provider> keys add [args]
 
-# generate provider address
-iritacli keys add provider --keyring-backend file
+<service-provider> keys show [args]
 
-# generate consumer address
-iritacli keys add consumer --keyring-backend file
-
-# send some token to provider address
-iritacli tx send $root_account $(iritacli keys show provider --keyring-backend file -o json | jq -r '.address') 1000000point --chain-id $chain_id -b block -y
-
-# send some token to consumer address
-iritacli tx send $root_account $(iritacli keys show consumer --keyring-backend file -o json | jq -r '.address') 1000000point --chain-id $chain_id -b block -y
+<service-provider> keys import [args]
 ```
 
-### Create service definition
-```bash
-# set provider address as a PowerUser
-iritacli tx admin add-roles $(iritacli keys show provider --keyring-backend file -o json | jq -r '.address') PowerUser --chain-id $chain_id -b block -y --from $root_account
+### Auth
 
-# define service
-iritacli tx service define --chain-id $chain_id --from provider --name $service_name --description="provide token price" --tags=price --schemas=iservice/service/service_definition.json -b block -y --keyring-backend file
+Interaction with BSNHub needs certain authorities.
+
+Please make sure that the specified key has the appropriate permissions.
+
+### Service Deployment
+
+If the service has not been deployed yet, the deployment process can be performed by running the following command:
+
+```bash
+<service-provider> deploy
 ```
 
-### Create service binding
-```bash
-# bind service
-iritacli tx service bind --chain-id $chain_id --from provider --service-name $service_name --deposit=100000point --qos=50 --pricing iservice/service/service_pricing.json -b block -y --keyring-backend file
+_Note:_ For deployment automation, the metadata of the service definition and binding needs to be placed into `metadata` directory.
 
-# qury bindings
-iritacli query service bindings $service_name --chain-id $chain_id
-```
+### Start
 
-### Start iservice daemon
-```bash
-iservice start iservice start [chain-id] [node-uri] provider [password] binance
-```
+Start the service provider daemon:
 
-### Call service
 ```bash
-# call service
-iritacli tx service call --chain-id $chain_id --from consumer --service-name $service_name --data "{\"base\":\"iris\",\"quote\":\"usdt\"}" --providers $(iritacli keys show provider --keyring-backend file -o json | jq -r '.address') --service-fee-cap 1point --timeout 50 --frequency 5 -b block -y --keyring-backend file
-```
-
-### Query request & response
-```bash
-request_id = <your_request_id>
-iritacli query service request $request_id --chain-id $chain_id
-iritacli query service response $request_id --chain-id $chain_id
+<service-provider> start [config-file]
 ```
