@@ -1,0 +1,12 @@
+# iservice config
+iservice:
+  chain_id: irita-hub
+  node_rpc_addr: http://127.0.0.1:26657
+  node_grpc_addr: 127.0.0.1:9090
+  key_path: .keys/iservice
+  key_name: provider
+  passphrase: 12345678
+
+# fisco config
+fisco:
+  config_file: ./contract-service/fisco/config.toml
