@@ -1,13 +1,12 @@
-module github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider
+module github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider
 
 require (
 	github.com/FISCO-BCOS/go-sdk v0.10.1
-	github.com/ethereum/go-ethereum v1.9.18 // indirect
+	github.com/ethereum/go-ethereum v1.9.18
 	github.com/irisnet/service-sdk-go v0.0.0-00010101000000-000000000000
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/viper v1.7.1
-	github.com/tendermint/tendermint v0.33.8 // indirect
 	github.com/tidwall/gjson v1.6.1
 )
 

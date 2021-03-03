@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/common"
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/iservice"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
 )
 
 var (

@@ -7,6 +7,6 @@ iservice:
   key_name: provider
   passphrase: 12345678
 
-# bcos config
-bcos:
-  config_file: ./contracts-service/bcos/config.toml
+# fisco config
+fisco:
+  config_file: ./contract-service/fisco/config.toml

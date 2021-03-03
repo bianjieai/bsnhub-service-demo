@@ -5,17 +5,17 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/app"
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/common"
-	contractsservice "github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/contracts-service"
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/iservice"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/app"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
 )
 
 func DeployCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "deploy",
 		Short:   "Deploy iservice according to the metadata",
-		Example: `bcos-contracts-service-provider deploy [config-file]`,
+		Example: `fisco-contract-call-sp deploy [config-file]`,
 		Args:    cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			configFileName := ""
@@ -45,10 +45,14 @@ func DeployCmd() *cobra.Command {
 
 			iserviceClient := iservice.MakeServiceClientWrapper(iservice.NewConfig(config))
 
-			contractsService := contractsservice.MakeContractsService(config)
-			contractsService.Logger = logger
+			contractService, err := contractservice.BuildContractService(config)
+			if err != nil {
+				return err
+			}
 
-			appInstance := app.NewApp(iserviceClient, contractsService, logger)
+			contractService.Logger = logger
+
+			appInstance := app.NewApp(iserviceClient, contractService, logger)
 
 			err = appInstance.DeployIService(string(schemas), string(pricing))
 			if err != nil {

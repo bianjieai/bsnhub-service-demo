@@ -5,28 +5,28 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	contractsservice "github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/contracts-service"
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/iservice"
-	"github.com/bianjieai/bsnhub-service-demo/examples/bcos-contracts-service-provider/types"
+	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 )
 
 // App represents the provider application
 type App struct {
-	IServiceClient   iservice.ServiceClientWrapper
-	ContractsService contractsservice.ContractsService
-	Logger           *log.Logger
+	IServiceClient  iservice.ServiceClientWrapper
+	ContractService contractservice.ContractService
+	Logger          *log.Logger
 }
 
 // NewApp constructs a new App instance
 func NewApp(
 	iserviceClient iservice.ServiceClientWrapper,
-	contractsService contractsservice.ContractsService,
+	contractService contractservice.ContractService,
 	logger *log.Logger,
 ) App {
 	return App{
-		IServiceClient:   iserviceClient,
-		ContractsService: contractsService,
-		Logger:           logger,
+		IServiceClient:  iserviceClient,
+		ContractService: contractService,
+		Logger:          logger,
 	}
 }
 
@@ -36,10 +36,10 @@ func (app App) Start() {
 
 	err := app.IServiceClient.SubscribeServiceRequest(
 		types.ServiceName,
-		app.ContractsService.Callback,
+		app.ContractService.Callback,
 	)
 	if err != nil {
-		app.Logger.Errorf("failed to register service request listener, err: %s", err.Error())
+		app.Logger.Errorf("failed to subscribe service requests, err: %s", err.Error())
 		return
 	}
 
