@@ -67,7 +67,7 @@ func (app App) DeployIService(schemas string, pricing string) error {
 		return err2
 	}
 
-	_, err = app.IServiceClient.ServiceClient.QueryServiceBinding(types.ServiceName, provider)
+	_, err = app.IServiceClient.ServiceClient.QueryServiceBinding(types.ServiceName, provider.String())
 	if err != nil {
 		app.Logger.Infof("binding service")
 
