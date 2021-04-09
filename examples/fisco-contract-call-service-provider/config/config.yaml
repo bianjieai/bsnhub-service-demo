@@ -1,3 +1,7 @@
+base:
+  app_chain_type: fisco # application chain type
+  store_path: .db # store path
+
 # iservice config
 iservice:
   chain_id: irita-hub
@@ -9,4 +13,10 @@ iservice:
 
 # fisco config
 fisco:
-  config_file: ./contract-service/fisco/config.toml
+  connection_type: channel
+  ca_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/ca.crt
+  cert_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.crt
+  key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.key
+  sm_crypto: false
+  priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/key.pem
+  node_url: 60.247.61.162:20200

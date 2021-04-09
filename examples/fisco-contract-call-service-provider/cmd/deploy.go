@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 	"io/ioutil"
 
 	"github.com/spf13/cobra"
@@ -9,6 +10,7 @@ import (
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
 	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
 )
 
 func DeployCmd() *cobra.Command {
@@ -43,9 +45,15 @@ func DeployCmd() *cobra.Command {
 
 			logger := common.Logger
 
+			store, err := store.NewStore(config.GetString(common.ConfigKeyStorePath))
+			if err != nil {
+				return err
+			}
+			chainManager := server.NewChainManager(store)
+
 			iserviceClient := iservice.MakeServiceClientWrapper(iservice.NewConfig(config))
 
-			contractService, err := contractservice.BuildContractService(config)
+			contractService, err := contractservice.BuildContractService(config, chainManager)
 			if err != nil {
 				return err
 			}
