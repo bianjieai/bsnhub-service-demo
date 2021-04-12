@@ -10,8 +10,8 @@ import (
 // rootCmd is the entry point
 var (
 	rootCmd = &cobra.Command{
-		Use:   "nft-service-provider",
-		Short: "NFT service provider daemon command line interface",
+		Use:   "fisco-contract-call-sp",
+		Short: "fisco service provider daemon command line interface",
 	}
 )
 

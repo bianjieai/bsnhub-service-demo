@@ -45,7 +45,7 @@ func (f *FISCOChain) InstantiateClient(
 ) error {
 	chainParams, err := f.ChainManager.GetChainParams(chainID, groupID)
 	if err != nil {
-		return fmt.Errorf("chainparams not exist!", err)
+		return fmt.Errorf("chainparams not exist!")
 	}
 	config := fiscocfg.Config{
 		BaseConfig:  f.BaseConfig,
