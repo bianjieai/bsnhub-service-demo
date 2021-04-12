@@ -4,8 +4,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	config2 "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -14,6 +13,8 @@ import (
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
+	config2 "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
 
 // ContractService defines the contract service

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 	"github.com/spf13/cobra"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/app"
@@ -9,6 +8,7 @@ import (
 	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
 
 func StartCmd() *cobra.Command {

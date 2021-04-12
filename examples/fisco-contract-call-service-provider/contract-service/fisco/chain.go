@@ -6,8 +6,6 @@ import (
 	"encoding/hex"
 	"errors"
 	"fmt"
-	fiscocfg "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 	"math/big"
 
 	"github.com/ethereum/go-ethereum"
@@ -18,6 +16,8 @@ import (
 	"github.com/FISCO-BCOS/go-sdk/core/types"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	fiscocfg "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
 
 // FISCOChain defines the FISCO chain

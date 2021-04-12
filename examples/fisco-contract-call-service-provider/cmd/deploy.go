@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 	"io/ioutil"
 
 	"github.com/spf13/cobra"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/app"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
 	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
