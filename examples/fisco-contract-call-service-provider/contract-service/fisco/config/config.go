@@ -1,4 +1,4 @@
-package fisco
+package config
 
 import (
 	"encoding/json"
@@ -16,7 +16,6 @@ const (
 	Prefix = "fisco"
 
 	ConnectionType = "connection_type"
-	NodeURL        = "node_url"
 	CAFile         = "ca_file"
 	CertFile       = "cert_file"
 	KeyFile        = "key_file"
@@ -27,7 +26,6 @@ const (
 // BaseConfig defines the base config
 type BaseConfig struct {
 	IsHTTP     bool
-	NodeURL    string
 	CAFile     string
 	KeyFile    string
 	CertFile   string
@@ -37,6 +35,7 @@ type BaseConfig struct {
 
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
+	NodeURL string `json:"node_url"`
 	GroupID int   `json:"group_id"`
 	ChainID int64 `json:"chain_id"`
 }
@@ -50,7 +49,6 @@ type Config struct {
 // NewBaseConfig constructs a new BaseConfig instance from viper
 func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 	connType := v.GetString(common.GetConfigKey(Prefix, ConnectionType))
-	nodeURL := v.GetString(common.GetConfigKey(Prefix, NodeURL))
 	caFile := v.GetString(common.GetConfigKey(Prefix, CAFile))
 	certFile := v.GetString(common.GetConfigKey(Prefix, CertFile))
 	keyFile := v.GetString(common.GetConfigKey(Prefix, KeyFile))
@@ -81,7 +79,6 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 		return nil, fmt.Errorf("must use secp256k1 private key, but found %s", curve)
 	}
 
-	config.NodeURL = nodeURL
 	config.PrivateKey = keyBytes
 	config.CAFile = caFile
 	config.CertFile = certFile
@@ -100,6 +97,7 @@ func NewConfig(baseConfig BaseConfig, chainParams ChainParams) *Config {
 
 // BuildClientConfig builds the FISCO client config from the given Config
 func BuildClientConfig(config Config) *conf.Config {
+
 	return &conf.Config{
 		IsHTTP:     config.IsHTTP,
 		CAFile:     config.CAFile,

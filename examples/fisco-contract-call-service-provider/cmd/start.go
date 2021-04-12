@@ -7,6 +7,8 @@ import (
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
 	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
 
 func StartCmd() *cobra.Command {
@@ -31,16 +33,23 @@ func StartCmd() *cobra.Command {
 
 			logger := common.Logger
 
+			store, err := store.NewStore(config.GetString(common.ConfigKeyStorePath))
+			if err != nil {
+				return err
+			}
+			chainManager := server.NewChainManager(store)
+
 			iserviceClient := iservice.MakeServiceClientWrapper(iservice.NewConfig(config))
 
-			contractService, err := contractservice.BuildContractService(config)
+			contractService, err := contractservice.BuildContractService(config, chainManager)
 			if err != nil {
 				return err
 			}
 
 			contractService.Logger = logger
-
 			appInstance := app.NewApp(iserviceClient, contractService, logger)
+
+			go server.StartWebServer(chainManager)
 			appInstance.Start()
 
 			return nil

@@ -16,20 +16,25 @@ import (
 	"github.com/FISCO-BCOS/go-sdk/core/types"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	fiscocfg "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
 
 // FISCOChain defines the FISCO chain
 type FISCOChain struct {
-	Client     *fiscoclient.Client
-	BaseConfig BaseConfig
+	Client       *fiscoclient.Client
+	ChainManager *server.ChainManager
+	BaseConfig   fiscocfg.BaseConfig
 }
 
 // NewFISCOChain constructs a new FISCOChain instance
 func NewFISCOChain(
-	baseConfig BaseConfig,
+	baseConfig fiscocfg.BaseConfig,
+	chainManager *server.ChainManager,
 ) *FISCOChain {
 	return &FISCOChain{
-		BaseConfig: baseConfig,
+		BaseConfig:   baseConfig,
+		ChainManager: chainManager,
 	}
 }
 
@@ -38,15 +43,16 @@ func (f *FISCOChain) InstantiateClient(
 	groupID int,
 	chainID int64,
 ) error {
-	config := Config{
-		BaseConfig: f.BaseConfig,
-		ChainParams: ChainParams{
-			GroupID: groupID,
-			ChainID: chainID,
-		},
+	chainParams, err := f.ChainManager.GetChainParams(chainID, groupID)
+	if err != nil {
+		return fmt.Errorf("chainparams not exist!")
+	}
+	config := fiscocfg.Config{
+		BaseConfig:  f.BaseConfig,
+		ChainParams: chainParams,
 	}
 
-	clientConfig := BuildClientConfig(config)
+	clientConfig := fiscocfg.BuildClientConfig(config)
 
 	client, err := fiscoclient.Dial(clientConfig)
 	if err != nil {

@@ -13,6 +13,8 @@ import (
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
+	config2 "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
 
 // ContractService defines the contract service
@@ -30,14 +32,14 @@ func NewContractService(fiscoChain *fisco.FISCOChain, logger *log.Logger) Contra
 }
 
 // BuildContractService builds a ContractService instance from the given config
-func BuildContractService(config *viper.Viper) (ContractService, error) {
-	baseConfig, err := fisco.NewBaseConfig(config)
+func BuildContractService(config *viper.Viper, chainManager *server.ChainManager) (ContractService, error) {
+	baseConfig, err := config2.NewBaseConfig(config)
 	if err != nil {
 		return ContractService{}, err
 	}
 
 	return ContractService{
-		FISCOClient: fisco.NewFISCOChain(*baseConfig),
+		FISCOClient: fisco.NewFISCOChain(*baseConfig, chainManager),
 	}, nil
 }
 
