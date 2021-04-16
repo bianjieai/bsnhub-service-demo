@@ -1,10 +1,22 @@
 package iservice
 
 import (
+	"encoding/json"
+
 	servicesdk "github.com/irisnet/service-sdk-go"
 	"github.com/irisnet/service-sdk-go/service"
-	"github.com/irisnet/service-sdk-go/types"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 	"github.com/irisnet/service-sdk-go/types/store"
+	sdk "github.com/irisnet/service-sdk-go/types"
+)
+
+
+const (
+	eventTypeNewBatchRequestProvider = "new_batch_request_provider"
+	attributeKeyServiceName          = "service_name"
+	attributeKeyProvider             = "provider"
+	attributeKeyRequests             = "requests"
+	attributeKeyRequestID            = "request_id"
 )
 
 // ServiceClientWrapper defines a wrapper for service client
@@ -44,12 +56,12 @@ func NewServiceClientWrapper(
 		keyPath = defaultKeyPath
 	}
 
-	fee, err := types.ParseDecCoins(defaultFee)
+	fee, err := sdk.ParseDecCoins(defaultFee)
 	if err != nil {
 		panic(err)
 	}
 
-	config := types.ClientConfig{
+	config := sdk.ClientConfig{
 		NodeURI:  nodeRPCAddr,
 		GRPCAddr: nodeGRPCAddr,
 		ChainID:  chainID,
@@ -86,9 +98,94 @@ func MakeServiceClientWrapper(config Config) ServiceClientWrapper {
 
 // SubscribeServiceRequest wraps service.SubscribeServiceRequest
 func (s ServiceClientWrapper) SubscribeServiceRequest(serviceName string, cb service.RespondCallback) error {
-	_, err := s.ServiceClient.SubscribeServiceRequest(serviceName, cb, s.BuildBaseTx())
+	baseTx := s.BuildBaseTx()
+	provider, e := s.ServiceClient.QueryAddress(baseTx.From, baseTx.Password)
+	if e != nil {
+		return sdk.Wrap(e)
+	}
+
+	builder := sdk.NewEventQueryBuilder().AddCondition(
+		sdk.NewCond(eventTypeNewBatchRequestProvider, attributeKeyServiceName).EQ(sdk.EventValue(serviceName)),
+	).AddCondition(
+		sdk.NewCond(eventTypeNewBatchRequestProvider, attributeKeyProvider).EQ(sdk.EventValue(provider.String())),
+	)
+
+	_, err := s.ServiceClient.SubscribeNewBlock(builder, func(block sdk.EventDataNewBlock) {
+		msgs := s.GenServiceResponseMsgs(block.ResultEndBlock.Events, serviceName, provider, cb)
+		if msgs == nil || len(msgs) == 0 {
+			s.ServiceClient.Logger().Error("no message created",
+				"serviceName", serviceName,
+				"provider", provider,
+			)
+		}
+		if _, err := s.ServiceClient.SendBatch(msgs, baseTx); err != nil {
+			s.ServiceClient.Logger().Error("provider respond failed", "errMsg", err.Error())
+		}
+	})
 	return err
 }
+
+
+func (s ServiceClientWrapper) GenServiceResponseMsgs(events sdk.StringEvents, serviceName string,
+	provider sdk.AccAddress,
+	handler service.RespondCallback) (msgs []sdk.Msg) {
+
+	var ids []string
+	for _, e := range events {
+		if e.Type != eventTypeNewBatchRequestProvider {
+			continue
+		}
+		attributes := sdk.Attributes(e.Attributes)
+		svcName := attributes.GetValue(attributeKeyServiceName)
+		prov := attributes.GetValue(attributeKeyProvider)
+		if svcName == serviceName && prov == provider.String() {
+			reqIDsStr := attributes.GetValue(attributeKeyRequests)
+			var idsTemp []string
+			if err := json.Unmarshal([]byte(reqIDsStr), &idsTemp); err != nil {
+				s.ServiceClient.Logger().Error(
+					"service request don't exist",
+					attributeKeyRequestID, reqIDsStr,
+					attributeKeyServiceName, serviceName,
+					attributeKeyProvider, provider.String(),
+					"errMsg", err.Error(),
+				)
+				return
+			}
+			ids = append(ids, idsTemp...)
+		}
+	}
+
+	for _, reqID := range ids {
+		request, err := s.ServiceClient.QueryServiceRequest(reqID)
+		if err != nil {
+			s.ServiceClient.Logger().Error(
+				"service request don't exist",
+				attributeKeyRequestID, reqID,
+				attributeKeyServiceName, serviceName,
+				attributeKeyProvider, provider.String(),
+				"errMsg", err.Error(),
+			)
+			continue
+		}
+		//check again
+		providerStr := provider.String()
+		if providerStr == request.Provider && request.ServiceName == serviceName {
+			output, result := handler(request.RequestContextID, reqID, request.Input)
+			var resultObj types.Result
+			json.Unmarshal([]byte(result), &resultObj)
+			if resultObj.Code != 204{
+				msgs = append(msgs, &service.MsgRespondService{
+					RequestId: reqID,
+					Provider:  providerStr,
+					Output:    output,
+					Result:    result,
+				})
+			}
+		}
+	}
+	return msgs
+}
+
 
 // DefineService wraps iservice.DefineService
 func (s ServiceClientWrapper) DefineService(
@@ -119,7 +216,7 @@ func (s ServiceClientWrapper) BindService(
 	options string,
 	qos uint64,
 ) error {
-	depositCoins, err := types.ParseDecCoins(deposit)
+	depositCoins, err := sdk.ParseDecCoins(deposit)
 	if err != nil {
 		return err
 	}
@@ -144,8 +241,8 @@ func (s ServiceClientWrapper) BindService(
 }
 
 // BuildBaseTx builds a base tx
-func (s ServiceClientWrapper) BuildBaseTx() types.BaseTx {
-	return types.BaseTx{
+func (s ServiceClientWrapper) BuildBaseTx() sdk.BaseTx {
+	return sdk.BaseTx{
 		From:     s.KeyName,
 		Password: s.Passphrase,
 	}

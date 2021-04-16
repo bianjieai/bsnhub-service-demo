@@ -112,8 +112,16 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		return
 	}
 
+	chainParams, err := cs.FISCOClient.ChainManager.GetChainParams(request.ChainID, request.GroupID)
+	if err != nil {
+		res.Code = 204
+		res.Message = "chain params not exist"
+		cs.Logger.Error("chain params not exist")
+		return
+	}
+
 	// instantiate the fisco client with the specified group id and chain id
-	err = cs.FISCOClient.InstantiateClient(request.GroupID, request.ChainID)
+	err = cs.FISCOClient.InstantiateClient(chainParams)
 	if err != nil {
 		res.Code = 500
 		res.Message = "failed to connect to the fisco node"
