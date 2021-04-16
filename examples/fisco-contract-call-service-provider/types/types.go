@@ -5,6 +5,7 @@ const (
 )
 
 type Input struct {
+	OptType         string `json:"opt_type"`
 	GroupID         int    `json:"group_id"`
 	ChainID         int64  `json:"chain_id"`
 	ContractAddress string `json:"contract_address"`
@@ -13,7 +14,9 @@ type Input struct {
 }
 
 type Output struct {
-	Result string `json:"result"`
+	Result string `json:"result,omitempty"`
+	Status bool   `json:"status,omitempty"`
+	TxHash string `json:"tx_hash,omitempty"`
 }
 
 type Result struct {

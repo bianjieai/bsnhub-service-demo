@@ -3,6 +3,7 @@ package contract_service
 import (
 	"encoding/hex"
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	log "github.com/sirupsen/logrus"
@@ -51,6 +52,14 @@ func (cs ContractService) CallContract(
 	return cs.FISCOClient.CallContract(contractAddress, data)
 }
 
+// SendContractTx initiates a contract tx with the given contract address and data
+func (cs ContractService) SendContractTx(
+	contractAddress ethcmn.Address,
+	data []byte,
+) (status bool, txHash string, err error) {
+	return cs.FISCOClient.SendContractTx(contractAddress, data)
+}
+
 // Callback implements the iservice.RespondCallback interface
 func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string, result string) {
 	cs.Logger.Infof("service request received, request id: %s", reqID)
@@ -59,6 +68,9 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		Code: 200,
 	}
 
+	var status bool
+	var txHash string
+	var optType string
 	var callResult []byte
 
 	defer func() {
@@ -66,7 +78,12 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		result = string(resBz)
 
 		if res.Code == 200 {
-			outputBz, _ := json.Marshal(types.Output{Result: hex.EncodeToString(callResult)})
+			var outputBz []byte
+			if optType == "call"{
+				outputBz, _ = json.Marshal(types.Output{Result: hex.EncodeToString(callResult)})
+			}else if optType == "tx"{
+				outputBz, _ = json.Marshal(types.Output{Status: status, TxHash: txHash})
+			}
 			output = fmt.Sprintf(`{"header":{},"body":%s}`, outputBz)
 		}
 
@@ -83,6 +100,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 		return
 	}
+	optType = request.OptType
 
 	contractAddress := ethcmn.HexToAddress(request.ContractAddress)
 
@@ -94,17 +112,30 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		return
 	}
 
+	chainParams, err := cs.FISCOClient.ChainManager.GetChainParams(request.ChainID, request.GroupID)
+	if err != nil {
+		res.Code = 204
+		res.Message = "chain params not exist"
+		cs.Logger.Error("chain params not exist")
+		return
+	}
+
 	// instantiate the fisco client with the specified group id and chain id
-	err = cs.FISCOClient.InstantiateClient(request.GroupID, request.ChainID)
+	err = cs.FISCOClient.InstantiateClient(chainParams)
 	if err != nil {
 		res.Code = 500
 		res.Message = "failed to connect to the fisco node"
 
 		return
 	}
-
-	// call contract
-	callResult, err = cs.CallContract(contractAddress, callData)
+	if optType == "call"{
+		callResult, err = cs.CallContract(contractAddress, callData)
+	}else if optType == "tx"{
+		// send contract tx
+		status, txHash, err = cs.SendContractTx(contractAddress, callData)
+	}else{
+		err = errors.New("wrong operation type")
+	}
 	if err != nil {
 		res.Code = 500
 		res.Message = err.Error()

@@ -30,6 +30,14 @@
       "result": {
         "description": "abi-encoded call result",
         "type": "string"
+      },
+      "status": {
+        "description": "transaction status",
+        "type": "boolean"
+      },
+      "tx_hash": {
+        "description": "transaction hash",
+        "type": "string"
       }
     }
   }

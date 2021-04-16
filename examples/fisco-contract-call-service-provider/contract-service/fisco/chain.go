@@ -40,13 +40,8 @@ func NewFISCOChain(
 
 // InstantiateClient instantiates the fisco client according to the given chain params
 func (f *FISCOChain) InstantiateClient(
-	groupID int,
-	chainID int64,
+	chainParams fiscocfg.ChainParams,
 ) error {
-	chainParams, err := f.ChainManager.GetChainParams(chainID, groupID)
-	if err != nil {
-		return fmt.Errorf("chainparams not exist!")
-	}
 	config := fiscocfg.Config{
 		BaseConfig:  f.BaseConfig,
 		ChainParams: chainParams,
