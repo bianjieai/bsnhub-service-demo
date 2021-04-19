@@ -19,3 +19,11 @@ fisco:
   key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.key
   sm_crypto: true
   priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/key.pem
+
+# mysql config
+mysql:
+  db_name: relayer
+  db_user_name: root
+  db_user_passphrase: 123456
+  host: localhost
+  port: 3306

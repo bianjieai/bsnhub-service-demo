@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
 	"github.com/spf13/cobra"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/app"
@@ -48,6 +49,10 @@ func StartCmd() *cobra.Command {
 
 			contractService.Logger = logger
 			appInstance := app.NewApp(iserviceClient, contractService, logger)
+
+			mysqlConfig := mysql.NewConfig(config)
+			mysql.NewDB(mysqlConfig)
+			defer mysql.DB.Close()
 
 			go server.StartWebServer(chainManager)
 			appInstance.Start()

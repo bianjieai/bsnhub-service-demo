@@ -14,6 +14,7 @@ import (
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
 	config2 "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
 )
@@ -100,6 +101,9 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 		return
 	}
+
+	mysql.OnServiceRequestReceived(reqID, types.GetChainID(request.ChainID, request.GroupID))
+
 	optType = request.OptType
 
 	contractAddress := ethcmn.HexToAddress(request.ContractAddress)
@@ -128,18 +132,20 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 		return
 	}
+
+	txErr := errors.New("wrong operation type")
 	if optType == "call"{
-		callResult, err = cs.CallContract(contractAddress, callData)
+		callResult, txErr = cs.CallContract(contractAddress, callData)
 	}else if optType == "tx"{
 		// send contract tx
-		status, txHash, err = cs.SendContractTx(contractAddress, callData)
-	}else{
-		err = errors.New("wrong operation type")
+		status, txHash, txErr = cs.SendContractTx(contractAddress, callData)
 	}
-	if err != nil {
+	if txErr != nil {
+		mysql.TxErrCollection(reqID, txErr.Error())
 		res.Code = 500
-		res.Message = err.Error()
+		res.Message = txErr.Error()
 	}
+	mysql.OnContractTxSend(reqID, txHash)
 
 	return output, result
 }
