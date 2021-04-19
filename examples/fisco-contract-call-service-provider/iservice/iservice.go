@@ -3,11 +3,12 @@ package iservice
 import (
 	"encoding/json"
 
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 	servicesdk "github.com/irisnet/service-sdk-go"
 	"github.com/irisnet/service-sdk-go/service"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
-	"github.com/irisnet/service-sdk-go/types/store"
 	sdk "github.com/irisnet/service-sdk-go/types"
+	"github.com/irisnet/service-sdk-go/types/store"
 )
 
 
@@ -118,8 +119,18 @@ func (s ServiceClientWrapper) SubscribeServiceRequest(serviceName string, cb ser
 				"provider", provider,
 			)
 		}
-		if _, err := s.ServiceClient.SendBatch(msgs, baseTx); err != nil {
-			s.ServiceClient.Logger().Error("provider respond failed", "errMsg", err.Error())
+		for _, msg := range msgs {
+			msg, ok := msg.(*service.MsgRespondService)
+			resTx, err := s.ServiceClient.BuildAndSend([]sdk.Msg{msg}, baseTx)
+			if err != nil {
+				if ok {
+					mysql.TxErrCollection(msg.RequestId, err.Error())
+				}
+				s.ServiceClient.Logger().Error("provider respond failed", "errMsg", err.Error())
+			}
+			if ok {
+				mysql.OnInterchainResponseSent(msg.RequestId, resTx.Hash)
+			}
 		}
 	})
 	return err
