@@ -2,30 +2,14 @@ package server
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 )
 
 // ChainManager defines a service for app chains management
 type ChainManager struct {
 	store *store.Store
-}
-
-// GetChainID returns the unique chain id from the specified chain params
-func GetChainID(chainID int64, groupID int) string {
-	return fmt.Sprintf("%s-%d-%d", "fisco", groupID, chainID)
-}
-
-// GetChainIDFromBytes returns the unique chain id from the given chain params bytes
-func GetChainIDFromBytes(params []byte) (string, error) {
-	var chainParams config.ChainParams
-	err := json.Unmarshal(params, &chainParams)
-	if err != nil {
-		return "", err
-	}
-
-	return GetChainID(chainParams.ChainID, chainParams.GroupID), nil
 }
 
 // NewChainManager constructs a new ChainManager instance
@@ -37,7 +21,7 @@ func NewChainManager(s *store.Store) *ChainManager {
 
 // AddChain adds a new app chain for the relayer
 func (cm *ChainManager) AddChain(params []byte) (chainID string, err error) {
-	chainID, err = GetChainIDFromBytes(params)
+	chainID, err = types.GetChainIDFromBytes(params)
 	if err != nil{
 		return "", err
 	}
@@ -117,7 +101,7 @@ func (cm *ChainManager)DeleteChain(chainID string) (err error) {
 // GetChainParams gets all chain params by chain-id
 func (cm *ChainManager)GetChainParams(chainID int64, groupID int) (config.ChainParams, error) {
 	var chainParams config.ChainParams
-	chainParamsBz, err := cm.store.Get([]byte(GetChainID(chainID, groupID)))
+	chainParamsBz, err := cm.store.Get([]byte(types.GetChainID(chainID, groupID)))
 	if err != nil {
 		return config.ChainParams{}, err
 	}
