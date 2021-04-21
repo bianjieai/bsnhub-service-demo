@@ -63,7 +63,7 @@ func NewDB(mysqlConfig Config, options ...Option) {
 }
 
 func insert(field string, value string) error {
-	stmt, err := DB.Prepare("INSERT tb_irita_crosschain_tx SET " + field + "=?")
+	stmt, err := DB.Prepare("INSERT tb_irita_crosschain_tx SET " + field + "=?" + ", source_service = 1")
 	if err != nil {
 		return err
 	}
@@ -82,8 +82,8 @@ func insert(field string, value string) error {
 	return nil
 }
 
-func update(field, value, requestID string) error {
-	cmd := fmt.Sprintf("UPDATE tb_irita_crosschain_tx SET %s=? where ic_request_id='%s'", field, requestID)
+func update(field, value, icResID string) error {
+	cmd := fmt.Sprintf("UPDATE tb_irita_crosschain_tx SET %s=? where ic_request_id='%s' and source_service = 1", field, icResID)
 	stmt, err := DB.Prepare(cmd)
 	if err != nil {
 		return err
@@ -102,8 +102,8 @@ func update(field, value, requestID string) error {
 
 	return nil
 }
-func updateTime(field, requestID string) error {
-	cmd := fmt.Sprintf("UPDATE tb_irita_crosschain_tx SET %s=now() where request_id='%s'", field, requestID)
+func updateTime(field, icResID string) error {
+	cmd := fmt.Sprintf("UPDATE tb_irita_crosschain_tx SET %s=now() where request_id='%s'", field, icResID)
 	stmt, err := DB.Prepare(cmd)
 	if err != nil {
 		return err

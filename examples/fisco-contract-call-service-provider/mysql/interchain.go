@@ -5,8 +5,13 @@ import (
 )
 
 // OnServiceRequestReceived is the hook which is called when the service request is received
-func OnServiceRequestReceived(requestID, toChainID string) {
-	err := update("to_chainid", toChainID, requestID)
+func OnServiceRequestReceived(icResID, toChainID string) {
+	err := insert("ic_request_id", icResID)
+	if err != nil {
+		common.Logger.Errorf(err.Error())
+		return
+	}
+	err = update("to_chainid", toChainID, icResID)
 	if err != nil {
 		common.Logger.Errorf(err.Error())
 		return
@@ -14,8 +19,8 @@ func OnServiceRequestReceived(requestID, toChainID string) {
 }
 
 // OnContractTxSend is the hook which is called when the request is sent to target chain
-func OnContractTxSend(requestID, toTx string) {
-	err := update("to_tx", toTx, requestID)
+func OnContractTxSend(icResID, toTx string) {
+	err := update("to_tx", toTx, icResID)
 	if err != nil {
 		common.Logger.Errorf(err.Error())
 		return
@@ -31,8 +36,13 @@ func OnInterchainResponseSent(icResID, hubResTx string) {
 	}
 }
 
-func TxErrCollection(requestID, errStr string){
-	err := update("error", errStr, requestID)
+func TxErrCollection(icResID, errStr string){
+	err := update("error", errStr, icResID)
+	if err != nil {
+		common.Logger.Errorf(err.Error())
+		return
+	}
+	err = update("tx_status", "2", icResID)
 	if err != nil {
 		common.Logger.Errorf(err.Error())
 		return
