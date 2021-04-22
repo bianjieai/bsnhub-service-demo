@@ -120,15 +120,11 @@ func (s ServiceClientWrapper) SubscribeServiceRequest(serviceName string, cb ser
 			)
 		}
 		for _, msg := range msgs {
-			msg, ok := msg.(*service.MsgRespondService)
+			msg := msg.(*service.MsgRespondService)
 			resTx, err := s.ServiceClient.BuildAndSend([]sdk.Msg{msg}, baseTx)
 			if err != nil {
-				if ok {
-					mysql.TxErrCollection(msg.RequestId, err.Error())
-				}
-				s.ServiceClient.Logger().Error("provider respond failed", "errMsg", err.Error())
-			}
-			if ok {
+				mysql.TxErrCollection(msg.RequestId, err.Error())
+			}else{
 				mysql.OnInterchainResponseSent(msg.RequestId, resTx.Hash)
 			}
 		}
