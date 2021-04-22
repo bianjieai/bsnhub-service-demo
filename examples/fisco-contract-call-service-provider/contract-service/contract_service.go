@@ -102,8 +102,6 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		return
 	}
 
-	mysql.OnServiceRequestReceived(reqID, types.GetChainID(request.ChainID, request.GroupID))
-
 	optType = request.OptType
 
 	contractAddress := ethcmn.HexToAddress(request.ContractAddress)
@@ -123,6 +121,8 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		cs.Logger.Error("chain params not exist")
 		return
 	}
+
+	mysql.OnServiceRequestReceived(reqID, types.GetChainID(request.ChainID, request.GroupID))
 
 	// instantiate the fisco client with the specified group id and chain id
 	err = cs.FISCOClient.InstantiateClient(chainParams)
