@@ -16,6 +16,12 @@ func OnServiceRequestReceived(icResID, toChainID string) {
 		common.Logger.Errorf(err.Error())
 		return
 	}
+
+	err = updateTime("tx_createtime", icResID)
+	if err != nil {
+		common.Logger.Errorf(err.Error())
+		return
+	}
 }
 
 // OnContractTxSend is the hook which is called when the request is sent to target chain
@@ -34,9 +40,14 @@ func OnInterchainResponseSent(icResID, hubResTx string) {
 		common.Logger.Errorf(err.Error())
 		return
 	}
+	err = update("tx_status", "1", icResID)
+	if err != nil {
+		common.Logger.Errorf(err.Error())
+		return
+	}
 }
 
-func TxErrCollection(icResID, errStr string){
+func TxErrCollection(icResID, errStr string) {
 	err := update("error", errStr, icResID)
 	if err != nil {
 		common.Logger.Errorf(err.Error())

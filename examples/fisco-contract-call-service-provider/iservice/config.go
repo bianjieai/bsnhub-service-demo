@@ -35,12 +35,13 @@ const (
 
 // Config is a config struct for iservice
 type Config struct {
-	ChainID      string `yaml:"chain_id"`
-	NodeRPCAddr  string `yaml:"node_rpc_addr"`
-	NodeGRPCAddr string `yaml:"node_grpc_addr"`
-	KeyPath      string `yaml:"key_path"`
-	KeyName      string `yaml:"key_name"`
-	Passphrase   string `yaml:"passphrase"`
+	ChainID      string            `yaml:"chain_id"`
+	NodeRPCAddr  string            `yaml:"node_rpc_addr"`
+	NodeGRPCAddr string            `yaml:"node_grpc_addr"`
+	KeyPath      string            `yaml:"key_path"`
+	KeyName      string            `yaml:"key_name"`
+	Passphrase   string            `yaml:"passphrase"`
+	NodesMap     map[string]string `yaml:"nodes"`
 }
 
 // NewConfig constructs a new Config from viper

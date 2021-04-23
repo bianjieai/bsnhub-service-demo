@@ -9,7 +9,11 @@ import (
 const (
 	DefaultConfigFileName = "./config/config.yaml"
 
-	ConfigKeyStorePath    = "base.store_path"
+	ConfigKeyStorePath = "base.store_path"
+
+	ConfigKeyServiceName = "service.service_name"
+
+	ConfigKeyNodes = "fisco.nodes"
 )
 
 // LoadYAMLConfig loads the YAML config file

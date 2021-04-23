@@ -11,15 +11,21 @@ iservice:
   key_name: node0
   passphrase: 1234567890
 
+service:
+  service_name: cross_service_devtest
+
 # fisco config
 fisco:
+  chainId: 1
   connection_type: channel
   ca_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/ca.crt
   cert_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.crt
   key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.key
   sm_crypto: true
   priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/key.pem
-
+  nodes:
+    fisco1.bsnbase.com: 192.168.1.72:20200
+    fisco2.bsnbase.com: 192.168.1.72:20201
 # mysql config
 mysql:
   db_name: relayer

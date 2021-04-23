@@ -7,7 +7,6 @@ import (
 
 	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 )
 
 // App represents the provider application
@@ -15,6 +14,12 @@ type App struct {
 	IServiceClient  iservice.ServiceClientWrapper
 	ContractService contractservice.ContractService
 	Logger          *log.Logger
+	ServiceName     string
+}
+
+func (a *App) SetServiceName(service_name string) {
+	a.Logger.Infof("SetServiceName : %s", service_name)
+	a.ServiceName = service_name
 }
 
 // NewApp constructs a new App instance
@@ -22,8 +27,8 @@ func NewApp(
 	iserviceClient iservice.ServiceClientWrapper,
 	contractService contractservice.ContractService,
 	logger *log.Logger,
-) App {
-	return App{
+) *App {
+	return &App{
 		IServiceClient:  iserviceClient,
 		ContractService: contractService,
 		Logger:          logger,
@@ -31,11 +36,10 @@ func NewApp(
 }
 
 // Start starts the provider process
-func (app App) Start() {
+func (app *App) Start() {
 	app.Logger.Infof("app started")
-
 	err := app.IServiceClient.SubscribeServiceRequest(
-		types.ServiceName,
+		app.ServiceName,
 		app.ContractService.Callback,
 	)
 	if err != nil {
@@ -47,14 +51,14 @@ func (app App) Start() {
 }
 
 // DeployIService deploys the iservice according to the given metadata
-func (app App) DeployIService(schemas string, pricing string) error {
-	app.Logger.Infof("starting to deploy %s service", types.ServiceName)
+func (app *App) DeployIService(schemas string, pricing string) error {
+	app.Logger.Infof("starting to deploy %s service", app.ServiceName)
 
-	_, err := app.IServiceClient.ServiceClient.QueryServiceDefinition(types.ServiceName)
+	_, err := app.IServiceClient.ServiceClient.QueryServiceDefinition(app.ServiceName)
 	if err != nil {
 		app.Logger.Infof("defining service")
 
-		err := app.IServiceClient.DefineService(types.ServiceName, "", "", nil, schemas)
+		err := app.IServiceClient.DefineService(app.ServiceName, "", "", nil, schemas)
 		if err != nil {
 			return fmt.Errorf("failed to define service: %s", err.Error())
 		}
@@ -67,11 +71,11 @@ func (app App) DeployIService(schemas string, pricing string) error {
 		return err2
 	}
 
-	_, err = app.IServiceClient.ServiceClient.QueryServiceBinding(types.ServiceName, provider.String())
+	_, err = app.IServiceClient.ServiceClient.QueryServiceBinding(app.ServiceName, provider.String())
 	if err != nil {
 		app.Logger.Infof("binding service")
 
-		err := app.IServiceClient.BindService(types.ServiceName, "100000point", pricing, "{}", 100)
+		err := app.IServiceClient.BindService(app.ServiceName, "100000point", pricing, "{}", 100)
 		if err != nil {
 			return fmt.Errorf("failed to bind service: %s", err.Error())
 		}
@@ -79,7 +83,7 @@ func (app App) DeployIService(schemas string, pricing string) error {
 		app.Logger.Infof("service binding already exists")
 	}
 
-	app.Logger.Infof("%s service deployment completed", types.ServiceName)
+	app.Logger.Infof("%s service deployment completed", app.ServiceName)
 
 	return nil
 }
