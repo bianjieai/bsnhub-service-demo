@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
@@ -13,10 +12,10 @@ import (
 	ethcmn "github.com/ethereum/go-ethereum/common"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
 	config2 "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 )
 
 // ContractService defines the contract service
@@ -63,8 +62,8 @@ func (cs ContractService) SendContractTx(
 
 // Callback implements the iservice.RespondCallback interface
 func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string, result string) {
-	cs.Logger.Infof("service request received, request id: %s", reqID)
 
+	cs.Logger.Infof("service request received, request id: %s", reqID)
 	res := &types.Result{
 		Code: 200,
 	}
@@ -80,9 +79,9 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 		if res.Code == 200 {
 			var outputBz []byte
-			if optType == "call"{
+			if optType == "call" {
 				outputBz, _ = json.Marshal(types.Output{Result: hex.EncodeToString(callResult)})
-			}else if optType == "tx"{
+			} else if optType == "tx" {
 				outputBz, _ = json.Marshal(types.Output{Status: status, TxHash: txHash})
 			}
 			output = fmt.Sprintf(`{"header":{},"body":%s}`, outputBz)
@@ -96,9 +95,9 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	var request types.Input
 	err := json.Unmarshal([]byte(input), &request)
 	if err != nil {
-		res.Code = 400
+		//参数不符合规则，直接不处理
+		res.Code = 204
 		res.Message = fmt.Sprintf("can not parse request [%s] input json string : %s", reqID, err.Error())
-
 		return
 	}
 
@@ -114,7 +113,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		return
 	}
 
-	chainParams, err := cs.FISCOClient.ChainManager.GetChainParams(request.ChainID, request.GroupID)
+	chainParams, err := cs.FISCOClient.ChainManager.GetChainParams(request.ChainID)
 	if err != nil {
 		res.Code = 204
 		res.Message = "chain params not exist"
@@ -122,7 +121,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		return
 	}
 
-	mysql.OnServiceRequestReceived(reqID, types.GetChainID(request.ChainID, request.GroupID))
+	mysql.OnServiceRequestReceived(reqID, types.GetChainIDString(request.ChainID))
 
 	// instantiate the fisco client with the specified group id and chain id
 	err = cs.FISCOClient.InstantiateClient(chainParams)
@@ -134,9 +133,9 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	}
 
 	txErr := errors.New("wrong operation type")
-	if optType == "call"{
+	if optType == "call" {
 		callResult, txErr = cs.CallContract(contractAddress, callData)
-	}else if optType == "tx"{
+	} else if optType == "tx" {
 		// send contract tx
 		status, txHash, txErr = cs.SendContractTx(contractAddress, callData)
 	}

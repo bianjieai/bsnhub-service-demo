@@ -51,6 +51,7 @@ func (f *FISCOChain) InstantiateClient(
 
 	client, err := fiscoclient.Dial(clientConfig)
 	if err != nil {
+		common.Logger.Errorf("failed to connect to fisco node: %s", err)
 		return fmt.Errorf("failed to connect to fisco node: %s", err)
 	}
 

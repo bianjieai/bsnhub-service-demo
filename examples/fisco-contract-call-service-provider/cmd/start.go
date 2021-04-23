@@ -8,8 +8,8 @@ import (
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
 	contractservice "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/iservice"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
 )
 
 func StartCmd() *cobra.Command {
@@ -50,9 +50,15 @@ func StartCmd() *cobra.Command {
 			contractService.Logger = logger
 			appInstance := app.NewApp(iserviceClient, contractService, logger)
 
+			//set service name
+			appInstance.SetServiceName(config.GetString(common.ConfigKeyServiceName))
+
 			mysqlConfig := mysql.NewConfig(config)
 			mysql.NewDB(mysqlConfig)
 			defer mysql.Close()
+
+			// set test api handle
+			server.SetTestCallBack(contractService.Callback)
 
 			go server.StartWebServer(chainManager)
 			appInstance.Start()

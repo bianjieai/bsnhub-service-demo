@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"math/rand"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -15,6 +16,7 @@ import (
 const (
 	Prefix = "fisco"
 
+	ChainId        = "chainId"
 	ConnectionType = "connection_type"
 	CAFile         = "ca_file"
 	CertFile       = "cert_file"
@@ -26,18 +28,20 @@ const (
 // BaseConfig defines the base config
 type BaseConfig struct {
 	IsHTTP     bool
+	ChainId    int64
 	CAFile     string
 	KeyFile    string
 	CertFile   string
 	PrivateKey []byte
 	IsSMCrypto bool
+	NodesMap   map[string]string
 }
 
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
-	NodeURL string `json:"node_url"`
-	GroupID int   `json:"group_id"`
-	ChainID int64 `json:"chain_id"`
+	NodeURL []string `json:"nodes"`
+	GroupID int      `json:"groupId"`
+	ChainID int64    `json:"chainId"`
 }
 
 // Config defines the specific chain config
@@ -54,7 +58,7 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 	keyFile := v.GetString(common.GetConfigKey(Prefix, KeyFile))
 	smCrypto := v.GetBool(common.GetConfigKey(Prefix, SMCrypto))
 	privKeyFile := v.GetString(common.GetConfigKey(Prefix, PrivateKeyFile))
-
+	chainId := v.GetInt64(common.GetConfigKey(Prefix, ChainId))
 	config := new(BaseConfig)
 
 	if strings.EqualFold(connType, "rpc") {
@@ -79,10 +83,16 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 		return nil, fmt.Errorf("must use secp256k1 private key, but found %s", curve)
 	}
 
+	if chainId == 0 {
+		chainId = 1
+	}
+	config.ChainId = chainId
 	config.PrivateKey = keyBytes
 	config.CAFile = caFile
 	config.CertFile = certFile
 	config.KeyFile = keyFile
+	config.NodesMap = v.GetStringMapString(common.ConfigKeyNodes)
+	common.Logger.Infof("config fisco nods : %v", config.NodesMap)
 
 	return config, nil
 }
@@ -98,6 +108,15 @@ func NewConfig(baseConfig BaseConfig, chainParams ChainParams) *Config {
 // BuildClientConfig builds the FISCO client config from the given Config
 func BuildClientConfig(config Config) *conf.Config {
 
+	//将接口传递的节点名称通过配置转换为 节点地址，如果不在配置中，不转换
+	//随机取一个传入的node
+	nodeName := randURL(config.NodeURL)
+	//获取配置的nodeURL
+	nodeUrl, ok := config.NodesMap[nodeName]
+	if ok {
+		nodeName = nodeUrl
+	}
+
 	return &conf.Config{
 		IsHTTP:     config.IsHTTP,
 		CAFile:     config.CAFile,
@@ -106,8 +125,8 @@ func BuildClientConfig(config Config) *conf.Config {
 		PrivateKey: config.PrivateKey,
 		IsSMCrypto: config.IsSMCrypto,
 		GroupID:    config.GroupID,
-		ChainID:    config.ChainID,
-		NodeURL:    config.NodeURL,
+		ChainID:    config.BaseConfig.ChainId,
+		NodeURL:    nodeName,
 	}
 }
 
@@ -115,4 +134,14 @@ func BuildClientConfig(config Config) *conf.Config {
 func ValidateBaseConfig(baseCfg []byte) error {
 	var baseConfig BaseConfig
 	return json.Unmarshal(baseCfg, &baseConfig)
+}
+
+func randURL(m []string) string {
+	if len(m) == 0 {
+		return ""
+	}
+	for _, index := range rand.Perm(len(m)) {
+		return m[index]
+	}
+	return ""
 }

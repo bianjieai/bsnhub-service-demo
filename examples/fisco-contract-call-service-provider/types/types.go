@@ -1,22 +1,23 @@
 package types
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"strconv"
 )
 
 const (
-	ServiceName = "fisco-contract-call"
+//ServiceName = "cross_service_dev"
 )
 
 type Input struct {
-	OptType         string `json:"opt_type"`
-	GroupID         int    `json:"group_id"`
+	OptType string `json:"opt_type"`
+	//GroupID         int    `json:"group_id"`
 	ChainID         int64  `json:"chain_id"`
 	ContractAddress string `json:"contract_address"`
 	CallData        string `json:"call_data"`
-	Height          uint64 `json:"height"`
+	//Height          uint64 `json:"height"`
 }
 
 type Output struct {
@@ -31,8 +32,13 @@ type Result struct {
 }
 
 // GetChainID returns the unique chain id from the specified chain params
-func GetChainID(chainID int64, groupID int) string {
-	return fmt.Sprintf("%s-%d-%d", "fisco", groupID, chainID)
+func GetChainIDString(chainID int64) string {
+	return strconv.FormatInt(chainID, 10)
+}
+
+func GetChainID(chainID int64) string {
+	//return strconv.FormatInt(chainID,10)
+	return fmt.Sprintf("%s-%d-%d", "fisco", 11, chainID)
 }
 
 // GetChainIDFromBytes returns the unique chain id from the given chain params bytes
@@ -43,5 +49,5 @@ func GetChainIDFromBytes(params []byte) (string, error) {
 		return "", err
 	}
 
-	return GetChainID(chainParams.ChainID, chainParams.GroupID), nil
+	return GetChainID(chainParams.ChainID), nil
 }

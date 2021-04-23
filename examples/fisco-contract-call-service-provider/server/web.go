@@ -1,17 +1,25 @@
 package server
 
 import (
-	"net/http"
-
-	"github.com/gin-gonic/gin"
-
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	"github.com/gin-gonic/gin"
+	"github.com/irisnet/service-sdk-go/service"
+	"io/ioutil"
+	"net/http"
 )
+
+var (
+	callBack service.RespondCallback
+)
+
+func SetTestCallBack(cb service.RespondCallback) {
+	callBack = cb
+}
 
 // HTTPService represents an HTTP service
 type HTTPService struct {
-	Router        *gin.Engine
-	ChainManager  *ChainManager
+	Router       *gin.Engine
+	ChainManager *ChainManager
 }
 
 // NewHTTPService constructs a new HTTPService instance
@@ -19,8 +27,8 @@ func NewHTTPService(
 	chainManager *ChainManager,
 ) *HTTPService {
 	srv := HTTPService{
-		Router:        gin.Default(),
-		ChainManager:  chainManager,
+		Router:       gin.Default(),
+		ChainManager: chainManager,
 	}
 
 	srv.createRouter()
@@ -34,23 +42,53 @@ func (srv *HTTPService) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (srv *HTTPService) createRouter() {
 	r := gin.Default()
-
-	r.POST("/chains", srv.AddChain)
-	r.GET("/chains", srv.GetChains)
-	r.POST("/delete/:chainid", srv.DeleteChain)
+	api := r.Group("/api/v0")
+	fiscobcos := api.Group("/fiscobcos")
+	{
+		fiscobcos.POST("/chains", srv.AddChain)
+		fiscobcos.GET("/chains", srv.GetChains)
+		fiscobcos.POST("/delete/:chainid", srv.DeleteChain)
+	}
 
 	r.GET("/health", srv.ShowHealth)
+	r.POST("/test", srv.TestCallBack)
 
 	srv.Router = r
 }
 
-func (srv *HTTPService) AddChain(c *gin.Context) {
-	var req AddChainRequest
-	if err := c.BindJSON(&req); err != nil {
-		onError(c, http.StatusBadRequest, "invalid JSON payload")
+func (srv *HTTPService) TestCallBack(c *gin.Context) {
+
+	common.Logger.Infof("Into TestCallBack")
+
+	var bodyBytes []byte
+
+	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		common.Logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, "invalid JSON payload")
 		return
 	}
-	chainID, err := srv.ChainManager.AddChain([]byte(req.ChainParams))
+	common.Logger.Infof("Test Data Is : %s", string(bodyBytes))
+
+	output, result := callBack("testreqCtxId", "testreqId", string(bodyBytes))
+
+	common.Logger.Infof("output:%s", output)
+	common.Logger.Infof("result:%s", result)
+
+	onSuccess(c, output)
+}
+
+func (srv *HTTPService) AddChain(c *gin.Context) {
+
+	var bodyBytes []byte
+	bodyBytes, err := ioutil.ReadAll(c.Request.Body)
+	if err != nil {
+		common.Logger.Error(err.Error())
+		c.JSON(http.StatusBadRequest, "invalid JSON payload")
+		return
+	}
+
+	chainID, err := srv.ChainManager.AddChain(bodyBytes)
 	if err != nil {
 		onError(c, http.StatusInternalServerError, err.Error())
 		return
@@ -77,7 +115,6 @@ func (srv *HTTPService) GetChains(c *gin.Context) {
 	}
 	onSuccess(c, chains)
 }
-
 
 // ShowHealth returns the health state
 func (srv *HTTPService) ShowHealth(c *gin.Context) {

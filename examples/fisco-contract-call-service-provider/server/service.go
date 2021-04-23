@@ -22,12 +22,12 @@ func NewChainManager(s *store.Store) *ChainManager {
 // AddChain adds a new app chain for the relayer
 func (cm *ChainManager) AddChain(params []byte) (chainID string, err error) {
 	chainID, err = types.GetChainIDFromBytes(params)
-	if err != nil{
+	if err != nil {
 		return "", err
 	}
-	chainIDsbz, _ :=cm.store.Get([]byte("chainIDs"))
+	chainIDsbz, _ := cm.store.Get([]byte("chainIDs"))
 	if chainIDsbz == nil {
-		chainIDsbz,err = json.Marshal(map[string]string{})
+		chainIDsbz, err = json.Marshal(map[string]string{})
 		if err != nil {
 			return "", err
 		}
@@ -35,10 +35,10 @@ func (cm *ChainManager) AddChain(params []byte) (chainID string, err error) {
 		if err != nil {
 			return "", err
 		}
-	}else{
-		chainIDMap:= map[string]bool{}
+	} else {
+		chainIDMap := map[string]bool{}
 		json.Unmarshal(chainIDsbz, &chainIDMap)
-		chainIDMap[chainID]= true
+		chainIDMap[chainID] = true
 		bz, err := json.Marshal(chainIDMap)
 		if err != nil {
 			return "", err
@@ -52,12 +52,12 @@ func (cm *ChainManager) AddChain(params []byte) (chainID string, err error) {
 	if err != nil {
 		return "", err
 	}
-	return chainID,nil
+	return chainID, nil
 }
 
 // GetChains gets all active app chains
-func (cm *ChainManager) GetChains() ([]string,error) {
-	chainIDMap:= map[string]bool{}
+func (cm *ChainManager) GetChains() ([]string, error) {
+	chainIDMap := map[string]bool{}
 	chainIDsbz, err := cm.store.Get([]byte("chainIDs"))
 	if err != nil {
 		return nil, err
@@ -67,8 +67,8 @@ func (cm *ChainManager) GetChains() ([]string,error) {
 		return nil, err
 	}
 	chainIDs := []string{}
-	for chainID, isexist := range chainIDMap{
-		if isexist{
+	for chainID, isexist := range chainIDMap {
+		if isexist {
 			chainIDs = append(chainIDs, chainID)
 		}
 	}
@@ -76,8 +76,8 @@ func (cm *ChainManager) GetChains() ([]string,error) {
 }
 
 // DeleteChain delete chain params by chain-id
-func (cm *ChainManager)DeleteChain(chainID string) (err error) {
-	chainIDMap:= map[string]bool{}
+func (cm *ChainManager) DeleteChain(chainID string) (err error) {
+	chainIDMap := map[string]bool{}
 	chainIDsbz, err := cm.store.Get([]byte("chainIDs"))
 	if err != nil {
 		return err
@@ -99,9 +99,9 @@ func (cm *ChainManager)DeleteChain(chainID string) (err error) {
 }
 
 // GetChainParams gets all chain params by chain-id
-func (cm *ChainManager)GetChainParams(chainID int64, groupID int) (config.ChainParams, error) {
+func (cm *ChainManager) GetChainParams(chainID int64) (config.ChainParams, error) {
 	var chainParams config.ChainParams
-	chainParamsBz, err := cm.store.Get([]byte(types.GetChainID(chainID, groupID)))
+	chainParamsBz, err := cm.store.Get([]byte(types.GetChainID(chainID)))
 	if err != nil {
 		return config.ChainParams{}, err
 	}
