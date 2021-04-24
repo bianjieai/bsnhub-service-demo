@@ -1,6 +1,7 @@
 base:
   app_chain_type: fisco # application chain type
   store_path: .db # store path
+  http_port: 8083
 
 # iservice config
 iservice:

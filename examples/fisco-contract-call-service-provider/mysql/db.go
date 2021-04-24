@@ -105,7 +105,7 @@ func update(field, value, icResID string) error {
 }
 func updateTime(field, icResID string) error {
 	nowTime := time.Now().Format("2006-01-02 15:04:05")
-	cmd := fmt.Sprintf("UPDATE tb_irita_crosschain_tx SET %s='%s' where request_id='%s'", field, nowTime, icResID)
+	cmd := fmt.Sprintf("UPDATE tb_irita_crosschain_tx SET %s='%s' where ic_request_id='%s' and source_service = 1 ", field, nowTime, icResID)
 	stmt, err := DB.Prepare(cmd)
 	if err != nil {
 		return err
