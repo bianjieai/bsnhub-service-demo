@@ -12,11 +12,11 @@ const (
 )
 
 type Input struct {
-	OptType string `json:"opt_type"`
+	OptType string `json:"optType"`
 	//GroupID         int    `json:"group_id"`
-	ChainID         int64  `json:"chain_id"`
-	ContractAddress string `json:"contract_address"`
-	CallData        string `json:"call_data"`
+	ChainID         int64  `json:"chainId"`
+	ContractAddress string `json:"contractAddress"`
+	CallData        string `json:"callData"`
 	//Height          uint64 `json:"height"`
 }
 

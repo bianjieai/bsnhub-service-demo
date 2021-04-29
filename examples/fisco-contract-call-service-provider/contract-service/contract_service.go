@@ -8,6 +8,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"github.com/tidwall/gjson"
+	"strings"
 
 	ethcmn "github.com/ethereum/go-ethereum/common"
 
@@ -91,7 +92,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	}()
 
 	input = gjson.Get(input, "body").String()
-
+	cs.Logger.Infof("Input is %s ", input)
 	var request types.Input
 	err := json.Unmarshal([]byte(input), &request)
 	if err != nil {
@@ -105,14 +106,6 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 	contractAddress := ethcmn.HexToAddress(request.ContractAddress)
 
-	callData, err := hex.DecodeString(request.CallData)
-	if err != nil {
-		res.Code = 400
-		res.Message = fmt.Sprintf("can not decode call data: %s", err.Error())
-
-		return
-	}
-
 	chainParams, err := cs.FISCOClient.ChainManager.GetChainParams(request.ChainID)
 	if err != nil {
 		res.Code = 204
@@ -122,6 +115,16 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	}
 
 	mysql.OnServiceRequestReceived(reqID, types.GetChainIDString(request.ChainID))
+
+	request.CallData = strings.Trim(request.CallData, "0x")
+
+	callData, err := hex.DecodeString(request.CallData)
+	if err != nil {
+		res.Code = 400
+		res.Message = fmt.Sprintf("can not decode call data: %s", err.Error())
+
+		return
+	}
 
 	// instantiate the fisco client with the specified group id and chain id
 	err = cs.FISCOClient.InstantiateClient(chainParams)
