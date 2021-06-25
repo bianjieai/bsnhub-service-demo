@@ -3,8 +3,8 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 	"math/rand"
+	"strconv"
 	"strings"
 
 	"github.com/spf13/viper"
@@ -43,7 +43,7 @@ type BaseConfig struct {
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
 	NodeURL []string `json:"nodes"`
-	ChainID string    `json:"chainId"`
+	ChainID string    `json:"chain_id"`
 }
 
 // Config defines the specific chain config
@@ -116,8 +116,8 @@ func BuildClientConfig(config Config) *conf.Config {
 		Cert:       config.CertFile,
 		PrivateKey: config.PrivateKey,
 		IsSMCrypto: config.IsSMCrypto,
-		GroupID:    types.GetFiscoGroupID(config.ChainID),
-		ChainID:    types.GetFiscoChainID(config.ChainID),
+		GroupID:    GetFiscoGroupID(config.ChainID),
+		ChainID:    GetFiscoChainID(config.ChainID),
 		NodeURL:    nodeName,
 	}
 }
@@ -136,4 +136,18 @@ func randURL(m []string) string {
 		return m[index]
 	}
 	return ""
+}
+
+// GetChainID returns the unique fisco chain id from the ChainID
+func GetFiscoChainID(ChainID string) int64 {
+	chainInfos := strings.Split(ChainID, "-")
+	fiscoChainID, _ := strconv.ParseInt(chainInfos[2], 10, 64)
+	return fiscoChainID
+}
+
+// GetGroupID returns the unique fisco group id from the ChainID
+func GetFiscoGroupID(ChainID string) int  {
+	chainInfos := strings.Split(ChainID, "-")
+	fiscoGroupID, _ := strconv.Atoi(chainInfos[1])
+	return fiscoGroupID
 }

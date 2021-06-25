@@ -2,10 +2,11 @@ package fisco
 
 import (
 	"fmt"
+	"github.com/FISCO-BCOS/go-sdk/abi"
 	fiscoclient "github.com/FISCO-BCOS/go-sdk/client"
 	"github.com/FISCO-BCOS/go-sdk/core/types"
-	contract_service "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service"
 	ethcmn "github.com/ethereum/go-ethereum/common"
+	"strings"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
 	fiscocfg "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
@@ -14,10 +15,11 @@ import (
 
 // FISCOChain defines the FISCO chain
 type FISCOChain struct {
-	Client       *fiscoclient.Client
-	ChainManager *server.ChainManager
-	BaseConfig   fiscocfg.BaseConfig
-	IServiceCoreSession  *contract_service.IServiceCoreExSession   // iService Core Extension contract session
+	Client              *fiscoclient.Client
+	ChainManager        *server.ChainManager
+	BaseConfig          fiscocfg.BaseConfig
+	IServiceCoreSession *IServiceCoreExSession // iService Core Extension contract session
+	IServiceCoreABI     abi.ABI                // parsed iService Core Extension ABI
 }
 
 // NewFISCOChain constructs a new FISCOChain instance
@@ -48,12 +50,18 @@ func (f *FISCOChain) InstantiateClient(
 		return fmt.Errorf("failed to connect to fisco node: %s", err)
 	}
 
-	iServiceCore, err := contract_service.NewIServiceCoreEx(ethcmn.HexToAddress(f.BaseConfig.IServiceCoreAddr), client)
+	iServiceCore, err := NewIServiceCoreEx(ethcmn.HexToAddress(f.BaseConfig.IServiceCoreAddr), client)
 	if err != nil {
 		common.Logger.Errorf("failed to instantiate the iservice core contract: %s", err)
 	}
+
+	iServiceCoreABI, err := abi.JSON(strings.NewReader(IServiceCoreExABI))
+	if err != nil {
+		return fmt.Errorf("failed to parse iService Core Extension ABI: %s", err)
+	}
 	f.Client = client
-	f.IServiceCoreSession = &contract_service.IServiceCoreExSession{Contract: iServiceCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
+	f.IServiceCoreSession = &IServiceCoreExSession{Contract: iServiceCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
+	f.IServiceCoreABI = iServiceCoreABI
 	return nil
 }
 

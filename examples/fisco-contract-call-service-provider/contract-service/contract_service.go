@@ -7,6 +7,7 @@ import (
 	ethcmn "github.com/ethereum/go-ethereum/common"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
+	"strings"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
@@ -103,7 +104,36 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		res.Message = err.Error()
 	}
 
-	cs.FISCOClient.WaitForReceipt(tx, "")
+	receipt, err := cs.FISCOClient.WaitForReceipt(tx, "CallService")
+	if err != nil {
+		mysql.TxErrCollection(reqID, err.Error())
+		res.Code = 500
+		res.Message = err.Error()
+	}
+	for _, log := range receipt.Logs {
+		if !strings.EqualFold(log.Address, cs.FISCOClient.BaseConfig.IServiceCoreAddr) {
+			continue
+		}
+
+		data, err := hex.DecodeString(log.Data[2:])
+		if err != nil {
+			cs.Logger.Errorf("failed to decode the log data: %s", err)
+			continue
+		}
+
+		var event fisco.IServiceCoreExCrossChainResponseSent
+		err = cs.FISCOClient.IServiceCoreABI.Unpack(&event, "CrossChainResponseSent", data)
+		if err != nil {
+			cs.Logger.Errorf("failed to unpack the log data: %s", err)
+			continue
+		}
+		if event.EventName == "CrossChainRequestSent"{
+			continue
+		}
+
+		callResult = event.Result
+		break
+	}
 
 
 

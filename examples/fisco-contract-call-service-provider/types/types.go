@@ -3,8 +3,6 @@ package types
 import (
 	"encoding/json"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
-	"strconv"
-	"strings"
 )
 
 type Header struct {
@@ -63,19 +61,4 @@ func GetChainIDFromBytes(params []byte) (string, error) {
 	}
 
 	return chainParams.ChainID, nil
-}
-
-
-// GetChainID returns the unique fisco chain id from the ChainID
-func GetFiscoChainID(ChainID string) int64 {
-	chainInfos := strings.Split(ChainID, "-")
-	fiscoChainID, _ := strconv.ParseInt(chainInfos[2], 10, 64)
-	return fiscoChainID
-}
-
-// GetGroupID returns the unique fisco group id from the ChainID
-func GetFiscoGroupID(ChainID string) int  {
-	chainInfos := strings.Split(ChainID, "-")
-	fiscoGroupID, _ := strconv.Atoi(chainInfos[1])
-	return fiscoGroupID
 }
