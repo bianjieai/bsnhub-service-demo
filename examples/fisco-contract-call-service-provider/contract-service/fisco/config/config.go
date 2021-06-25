@@ -3,6 +3,7 @@ package config
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
 	"math/rand"
 	"strings"
 
@@ -23,25 +24,26 @@ const (
 	KeyFile        = "key_file"
 	SMCrypto       = "sm_crypto"
 	PrivateKeyFile = "priv_key_file"
+	IServiceCoreAddr   = "iservice_core_addr"
 )
 
 // BaseConfig defines the base config
 type BaseConfig struct {
 	IsHTTP     bool
-	ChainId    int64
+	ChainId    string
 	CAFile     string
 	KeyFile    string
 	CertFile   string
 	PrivateKey []byte
 	IsSMCrypto bool
 	NodesMap   map[string]string
+	IServiceCoreAddr string
 }
 
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
 	NodeURL []string `json:"nodes"`
-	GroupID int      `json:"groupId"`
-	ChainID int64    `json:"chainId"`
+	ChainID string    `json:"chainId"`
 }
 
 // Config defines the specific chain config
@@ -58,7 +60,8 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 	keyFile := v.GetString(common.GetConfigKey(Prefix, KeyFile))
 	smCrypto := v.GetBool(common.GetConfigKey(Prefix, SMCrypto))
 	privKeyFile := v.GetString(common.GetConfigKey(Prefix, PrivateKeyFile))
-	chainId := v.GetInt64(common.GetConfigKey(Prefix, ChainId))
+	chainId := v.GetString(common.GetConfigKey(Prefix, ChainId))
+	iServiceCoreAddr := v.GetString(common.GetConfigKey(Prefix, IServiceCoreAddr))
 	config := new(BaseConfig)
 
 	if strings.EqualFold(connType, "rpc") {
@@ -83,31 +86,20 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 		return nil, fmt.Errorf("must use secp256k1 private key, but found %s", curve)
 	}
 
-	if chainId == 0 {
-		chainId = 1
-	}
 	config.ChainId = chainId
 	config.PrivateKey = keyBytes
 	config.CAFile = caFile
 	config.CertFile = certFile
 	config.KeyFile = keyFile
 	config.NodesMap = v.GetStringMapString(common.ConfigKeyNodes)
+	config.IServiceCoreAddr = iServiceCoreAddr
 	common.Logger.Infof("config fisco nods : %v", config.NodesMap)
 
 	return config, nil
 }
 
-// NewConfig constructs a new Config instance
-func NewConfig(baseConfig BaseConfig, chainParams ChainParams) *Config {
-	return &Config{
-		BaseConfig:  baseConfig,
-		ChainParams: chainParams,
-	}
-}
-
 // BuildClientConfig builds the FISCO client config from the given Config
 func BuildClientConfig(config Config) *conf.Config {
-
 	//将接口传递的节点名称通过配置转换为 节点地址，如果不在配置中，不转换
 	//随机取一个传入的node
 	nodeName := randURL(config.NodeURL)
@@ -124,8 +116,8 @@ func BuildClientConfig(config Config) *conf.Config {
 		Cert:       config.CertFile,
 		PrivateKey: config.PrivateKey,
 		IsSMCrypto: config.IsSMCrypto,
-		GroupID:    config.GroupID,
-		ChainID:    config.BaseConfig.ChainId,
+		GroupID:    types.GetFiscoGroupID(config.ChainID),
+		ChainID:    types.GetFiscoChainID(config.ChainID),
 		NodeURL:    nodeName,
 	}
 }

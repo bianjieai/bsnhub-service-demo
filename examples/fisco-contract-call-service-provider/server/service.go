@@ -99,9 +99,9 @@ func (cm *ChainManager) DeleteChain(chainID string) (err error) {
 }
 
 // GetChainParams gets all chain params by chain-id
-func (cm *ChainManager) GetChainParams(chainID int64) (config.ChainParams, error) {
+func (cm *ChainManager) GetChainParams(chainID string) (config.ChainParams, error) {
 	var chainParams config.ChainParams
-	chainParamsBz, err := cm.store.Get([]byte(types.GetChainID(chainID)))
+	chainParamsBz, err := cm.store.Get([]byte(chainID))
 	if err != nil {
 		return config.ChainParams{}, err
 	}
