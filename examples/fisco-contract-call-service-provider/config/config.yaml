@@ -23,7 +23,7 @@ fisco:
   key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.key
   sm_crypto: true
   priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/key.pem
-  iservice_core_addr: 0xeed6b2cbb216f80cc76e7760120392ccf826acb5
+  iservice_core_addr: 0xb1439e9eb5073992d079716cc364d2bd23c22939
   nodes:
     fisco1.bsnbase.com: 60.247.61.162:20200
     fisco2.bsnbase.com: 60.247.61.162:20201
