@@ -18,8 +18,8 @@ type FISCOChain struct {
 	Client              *fiscoclient.Client
 	ChainManager        *server.ChainManager
 	BaseConfig          fiscocfg.BaseConfig
-	IServiceCoreSession *IServiceCoreExSession // iService Core Extension contract session
-	IServiceCoreABI     abi.ABI                // parsed iService Core Extension ABI
+	TargetCoreSession *TargetCoreExSession // iService Core Extension contract session
+	TargetCoreABI     abi.ABI                // parsed iService Core Extension ABI
 }
 
 // NewFISCOChain constructs a new FISCOChain instance
@@ -50,18 +50,18 @@ func (f *FISCOChain) InstantiateClient(
 		return fmt.Errorf("failed to connect to fisco node: %s", err)
 	}
 
-	iServiceCore, err := NewIServiceCoreEx(ethcmn.HexToAddress(f.BaseConfig.IServiceCoreAddr), client)
+	iServiceCore, err := NewTargetCoreEx(ethcmn.HexToAddress(f.BaseConfig.IServiceCoreAddr), client)
 	if err != nil {
 		common.Logger.Errorf("failed to instantiate the iservice core contract: %s", err)
 	}
 
-	iServiceCoreABI, err := abi.JSON(strings.NewReader(IServiceCoreExABI))
+	targetCoreABI, err := abi.JSON(strings.NewReader(TargetCoreExABI))
 	if err != nil {
 		return fmt.Errorf("failed to parse iService Core Extension ABI: %s", err)
 	}
 	f.Client = client
-	f.IServiceCoreSession = &IServiceCoreExSession{Contract: iServiceCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
-	f.IServiceCoreABI = iServiceCoreABI
+	f.TargetCoreSession = &TargetCoreExSession{Contract: iServiceCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
+	f.TargetCoreABI = targetCoreABI
 	return nil
 }
 

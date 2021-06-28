@@ -4,10 +4,12 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	ethcmn "github.com/ethereum/go-ethereum/common"
+	"strings"
+
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"strings"
+
+	ethcmn "github.com/ethereum/go-ethereum/common"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
@@ -42,7 +44,6 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		Code: 200,
 	}
 
-	//var status bool
 	var txHash string
 	var callResult []byte
 
@@ -97,7 +98,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		return
 	}
 
-	tx, _, err := cs.FISCOClient.IServiceCoreSession.CallService(requestIDByte32, contractAddress, request.CallData)
+	tx, _, err := cs.FISCOClient.TargetCoreSession.CallService(requestIDByte32, contractAddress, request.CallData)
 	if err != nil {
 		mysql.TxErrCollection(reqID, err.Error())
 		res.Code = 500
@@ -110,6 +111,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		res.Code = 500
 		res.Message = err.Error()
 	}
+	txHash = receipt.TransactionHash
 	for _, log := range receipt.Logs {
 		if !strings.EqualFold(log.Address, cs.FISCOClient.BaseConfig.IServiceCoreAddr) {
 			continue
@@ -121,21 +123,16 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 			continue
 		}
 
-		var event fisco.IServiceCoreExCrossChainResponseSent
-		err = cs.FISCOClient.IServiceCoreABI.Unpack(&event, "CrossChainResponseSent", data)
+		var event fisco.TargetCoreExCrossChainResponseSent
+		err = cs.FISCOClient.TargetCoreABI.Unpack(&event, "CrossChainResponseSent", data)
 		if err != nil {
 			cs.Logger.Errorf("failed to unpack the log data: %s", err)
-			continue
-		}
-		if event.EventName == "CrossChainRequestSent"{
 			continue
 		}
 
 		callResult = event.Result
 		break
 	}
-
-
 
 	mysql.OnContractTxSend(reqID, txHash)
 
