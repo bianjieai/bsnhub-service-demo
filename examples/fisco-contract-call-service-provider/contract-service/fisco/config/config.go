@@ -43,7 +43,8 @@ type BaseConfig struct {
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
 	NodeURL []string `json:"nodes"`
-	ChainID string    `json:"chain_id"`
+	ChainID int64    `json:"chain_id"`
+	GroupID int      `json:"group_id"`
 }
 
 // Config defines the specific chain config
@@ -116,8 +117,8 @@ func BuildClientConfig(config Config) *conf.Config {
 		Cert:       config.CertFile,
 		PrivateKey: config.PrivateKey,
 		IsSMCrypto: config.IsSMCrypto,
-		GroupID:    GetFiscoGroupID(config.ChainID),
-		ChainID:    GetFiscoChainID(config.ChainID),
+		GroupID:    config.GroupID,
+		ChainID:    config.ChainID,
 		NodeURL:    nodeName,
 	}
 }
