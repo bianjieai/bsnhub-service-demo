@@ -1,0 +1,59 @@
+name: "default-network"
+description: "开发环境"
+version: 1.0.0
+client:
+  peer:
+    eventService:
+      type: eventhub
+  organization: example.com
+  logging:
+    level: info
+  cryptoconfig:
+#    path: /Job/016-RDBaaS/04SourceCode/FabricGateway/src/RedNGWMS/services/fabricSMService/certs
+    path: /Users/yz/Desktop/gopath/src/RedNGWMS/services/fabricSMService/certs
+#    path: D:\goweifuwu\src\gm-sdk-demo\certs
+  credentialStore:
+#    path: /Job/016-RDBaaS/04SourceCode/FabricGateway/src/RedNGWMS/services/fabricSMService/certs/store
+    path: /Users/yz/Desktop/gopath/src/RedNGWMS/services/fabricSMService/certs/store
+#    path: D:\goweifuwu\src\gm-sdk-demo\certs\msptmp
+    cryptoStore:
+#      path: /Job/016-RDBaaS/04SourceCode/FabricGateway/src/RedNGWMS/services/fabricSMService/certs/store/msp
+      path: /Users/yz/Desktop/gopath/src/RedNGWMS/services/fabricSMService/certs/store/msp
+#      path: D:\goweifuwu\src\gm-sdk-demo\certs\msptmp\msp
+  BCCSP:
+    security:
+      enabled: true
+      default:
+        provider: "GM"
+      hashAlgorithm: "SM3"
+      softVerify: true
+      level: 256
+  tlsCerts:
+    systemCertPool: false
+    client:
+      key:
+#        path: /Job/016-RDBaaS/04SourceCode/FabricGateway/src/RedNGWMS/services/fabricSMService/certs/peerOrganizations/gmorganode.bsnbase.com/peers/peer1.gmorganode.bsnbase.com/tls/server.key
+#        path: /Users/yz/Desktop/gopath/src/RedNGWMS/services/fabricSMService/certs/peerOrganizations/gmwuhannode.bsnbase.com/peers/peer1.gmwuhannode.bsnbase.com/tls/server.key
+#        path: D:\goweifuwu\src\gm-sdk-demo\certs\peerOrganizations\gmorganode.bsnbase.com\peers\peer1.gmorganode.bsnbase.com\tls\server.key
+      cert:
+#        path: /Job/016-RDBaaS/04SourceCode/FabricGateway/src/RedNGWMS/services/fabricSMService/certs/peerOrganizations/gmorganode.bsnbase.com/peers/peer1.gmorganode.bsnbase.com/tls/server.crt
+#        path: /Users/yz/Desktop/gopath/src/RedNGWMS/services/fabricSMService/certs/peerOrganizations/gmwuhannode.bsnbase.com/peers/peer1.gmwuhannode.bsnbase.com/tls/server.crt
+#        path: D:\goweifuwu\src\gm-sdk-demo\certs\peerOrganizations\gmorganode.bsnbase.com\peers\peer1.gmorganode.bsnbase.com\tls\server.crt
+channels:
+
+organizations:
+
+orderers:
+  bsn.reddatetech.com:
+    url: bsn.reddatetech.com:17051
+    grpcOptions:
+      ssl-target-name-override: bsn.reddatetech.com #与 order名称 相同
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: /Users/yz/Desktop/gopath/src/RedNGWMS/services/fabricSMService/certs/ordererOrganizations/oegmordernode.bsnbase.com/orderers/order1.oegmordernode.bsnbase.com/tls/tlsintermediatecerts/tls-ca-oegmordernode-bsnbase-com-2.pem
+peers:
+

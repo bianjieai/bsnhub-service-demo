@@ -1,0 +1,23 @@
+base:
+  app_chain_type: fabric # application chain type
+  store_path: .db # store path
+  http_port: 18051
+  mysql_conn: root:123456@tcp(192.168.1.60:3306)/bsnflowdb?charset=utf8
+  city_code: ORG12345
+
+service:
+  service_name: cross_service_devtest
+
+hub:
+  chain_id: irita-hub
+  node_rpc_addr: http://127.0.0.1:26657
+  node_grpc_addr: 127.0.0.1:9090
+  key_path: .keys
+  key_name: relayer
+  passphrase: 12345678
+
+# fabric config
+fabric:
+  sdk_config: /root/config.yaml
+  msp_user_name: Admin
+  org_name: org1.example.com

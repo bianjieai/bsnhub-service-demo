@@ -1,0 +1,44 @@
+base:
+    app_chain_name: fabric # application chain name
+    store_path: .db # store path
+    http_port: 8088
+    mysql_conn: root:123456@tcp(192.168.1.60:3306)/bsnflowdb?charset=utf8
+
+# irita-hub config
+hub:
+    chain_id: irita-hub
+    node_rpc_addr: http://127.0.0.1:26657
+    node_grpc_addr: 127.0.0.1:9090
+    key_path: .keys
+    key_name: relayer
+    passphrase: 12345678
+
+# ethereum config
+eth:
+    chain_id: ropsten
+    node_rpc_addr: wss://ropsten.infura.io/ws/v3/56e89587eacb4fbe8655e4c44b146237
+    gas_limit: 2000000
+    gas_price: 5000000000
+    key: 5dee232c8be5cb81f0ae6fddb45243fc6208192c16aef275ef41b019df765d1f
+    iservice_core_addr: 0x79b6c1ab5dbeba4879bfbea35a78fac8e6c73c92
+    iservice_market_addr: 0x87e71e95fbd95d66e307edaeb7974c1f17f87a82
+    iservice_event_name: ServiceInvoked
+    iservice_event_sig: ServiceInvoked(bytes32,string,string,uint256)
+
+# fabric config
+fabric:
+    sdk_config: /root/config.yaml
+    channel_id: test-channel
+    peer_rpc_addrs:
+      - grpc://127.0.0.1:7051
+      - grpc://127.0.0.1:7052
+    orderer_rpc_addr: grpc://127.0.0.1:7050
+    key: test
+    passphrase: 123456789
+
+# fisco config
+fisco:
+    config_file: ./appchains/fisco/config.toml
+    iservice_core_addr: 0xe9708c47b560ac923e5a9096669fc71e8bd771cb
+    iservice_market_addr: 0x55edef761e7d489b39db2d38250b2496725cd722
+    monitor_interval: 1 # chain monitoring interval in seconds
