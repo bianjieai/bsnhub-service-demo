@@ -234,7 +234,7 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 		return entity.GetErrOutPut(), types.NewResult(types.Status_Chain_NotExist, "invalid JSON input body")
 	}
 
-	chainId := inputData.GetChainId()
+	chainId := inputData.Dest.ChainID
 	fabricChain, ok := f.appChain[chainId]
 
 	if !ok {
@@ -248,7 +248,7 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 		fabricChain, err = NewFabricChain(f.sdkConf, chainInfo)
 
 		if err != nil {
-			return entity.GetErrOutPut(), types.NewResult(types.Status_Error, fmt.Sprintf("call chain %s has error : %s", inputData.GetChainId(), err.Error()))
+			return entity.GetErrOutPut(), types.NewResult(types.Status_Error, fmt.Sprintf("call chain %s has error : %s", inputData.Dest.ChainID, err.Error()))
 		}
 
 		f.appChain[chainId] = fabricChain
@@ -261,11 +261,7 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 
 	var res *entity.FabricRespone
 
-	if inputData.FunType == "invoke" {
-		res, err = fabricChain.Invoke(inputData.ChainCode, inputData.Args)
-	} else {
-		res, err = fabricChain.Query(inputData.ChainCode, inputData.Args)
-	}
+	res, err = fabricChain.Invoke(inputData.ChainCode, inputData.Args)
 
 	InsectCrossInfo := entity.CrossChainInfo{
 		Ic_request_id:  reqID,

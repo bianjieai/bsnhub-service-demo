@@ -4,18 +4,26 @@ go 1.14
 
 require (
 	github.com/Knetic/govaluate v3.0.0+incompatible // indirect
+	github.com/Shopify/sarama v1.29.1 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
 	github.com/cloudflare/cfssl v0.0.0-20180202232422-27b05afbb513 // indirect
+	github.com/fsouza/go-dockerclient v1.7.3 // indirect
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/google/certificate-transparency-go v1.0.21 // indirect
+	github.com/hashicorp/go-version v1.3.0 // indirect
+	github.com/hyperledger/fabric v1.4.3
+	github.com/hyperledger/fabric-amcl v0.0.0-20210319225857-000ace5745f9 // indirect
 	github.com/hyperledger/fabric-lib-go v1.0.0 // indirect
 	github.com/hyperledger/fabric-sdk-go v1.0.0-alpha5
 	github.com/irisnet/service-sdk-go v1.0.0
+	github.com/miekg/pkcs11 v1.0.3 // indirect
+	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pkg/errors v0.9.1
-	github.com/sirupsen/logrus v1.6.0
+	github.com/sirupsen/logrus v1.7.0
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
+	github.com/sykesm/zap-logfmt v0.0.4 // indirect
 )
 
 replace (

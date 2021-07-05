@@ -32,8 +32,6 @@ func KeysAddCmd() *cobra.Command {
 				configFileName = args[2]
 			}
 
-			common.Logger.Infof("configFileName:%s", configFileName)
-
 			config, err := common.LoadYAMLConfig(configFileName)
 			if err != nil {
 				return err
