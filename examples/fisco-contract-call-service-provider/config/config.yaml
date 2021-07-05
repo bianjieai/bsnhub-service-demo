@@ -1,6 +1,7 @@
 base:
   app_chain_type: fisco # application chain type
   store_path: .db # store path
+  http_port: 8083
 
 # iservice config
 iservice:
@@ -18,11 +19,11 @@ service:
 fisco:
   chainId: fisco-1-1
   connection_type: channel
-  ca_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/ca.crt
-  cert_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.crt
-  key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/sdk.key
+  ca_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/ca.crt
+  cert_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/sdk.crt
+  key_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/sdk.key
   sm_crypto: true
-  priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/keys/key.pem
+  priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/key.pem
   iservice_core_addr: 0x69620b41f9b85151ce7f507bb7d9ce852158cb9c
   nodes:
     fisco1.bsnbase.com: 60.247.61.162:20200

@@ -1,4 +1,4 @@
-module bsn-irita-fabric-provider
+module bsn-irita-fabric-provider-gm
 
 go 1.14
 
