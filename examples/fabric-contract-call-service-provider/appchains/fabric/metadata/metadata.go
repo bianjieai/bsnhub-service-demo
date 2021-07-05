@@ -1,7 +1,5 @@
 package metadata
 
-import "strconv"
-
 type Header struct {
 	ReqSequence string `json:"req_sequence"`
 	ChainID     string `json:"id"`
@@ -36,15 +34,4 @@ type Dest struct {
 type CrossData struct {
 	*Header `json:"header"`
 	*Body   `json:"body"`
-}
-
-type FabricIutput struct {
-	ChainId   uint64   `json:"chainId"`
-	ChainCode string   `jso n:"chainCode"`
-	FunType   string   `json:"funType"`
-	Args      []string `json:"args"`
-}
-
-func (r *FabricIutput) GetChainId() string {
-	return strconv.FormatUint(r.ChainId, 10)
 }

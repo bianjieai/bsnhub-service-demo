@@ -22,6 +22,7 @@ const (
 	fabric_sdk_config    = "fabric.sdk_config"
 	fabric_msp_user_name = "fabric.msp_user_name"
 	fabric_org_name      = "fabric.org_name"
+	fabric_target_chaincode_name = "fabric.target_chaincode_name"
 	base_mysql_conn      = "base.mysql_conn"
 	base_city_code       = "base.city_code"
 )
@@ -48,6 +49,7 @@ func NewFabricChainHandle(serviceName string, v *viper.Viper, iserviceClient *is
 		MspUserName: v.GetString(fabric_msp_user_name),
 		OrgName:     v.GetString(fabric_org_name),
 		OrgCode:     v.GetString(base_city_code),
+		TargetChaincodeName: v.GetString(fabric_target_chaincode_name),
 	}
 	common.Logger.Infof("fabric config is %v", conf)
 
@@ -202,16 +204,16 @@ func (f *FabricChainHandler) pransInput(input string) (*metadata.CrossData, erro
 	return data, err
 }
 
-func checkInput(iutput *metadata.FabricIutput) (bool, string) {
+func checkInput(iutput *metadata.Body) (bool, string) {
 
-	if strings.TrimSpace(iutput.ChainCode) == "" {
+	if strings.TrimSpace(iutput.Dest.EndpointAddress) == "" {
 		return false, types.NewResult(types.Status_Params_Error, "chaincode can not be empty")
 	}
 
-	if strings.TrimSpace(iutput.FunType) == "" {
+	if strings.TrimSpace(iutput.Method) == "" {
 		return false, types.NewResult(types.Status_Params_Error, "function type can not be empty")
 	}
-	if len(iutput.Args) == 0 {
+	if len(iutput.CallData) == 0 {
 		return false, types.NewResult(types.Status_Params_Error, "args can not be empty")
 	}
 
@@ -260,8 +262,9 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 	}
 
 	var res *entity.FabricRespone
+	args := []string{"callService", crossData.Header.ReqSequence, inputData.Dest.EndpointAddress, string(inputData.CallData), inputData.Dest.SubChainID}
 
-	res, err = fabricChain.Invoke(inputData.ChainCode, inputData.Args)
+	res, err = fabricChain.Invoke(f.sdkConf.TargetChaincodeName, args)
 
 	InsectCrossInfo := entity.CrossChainInfo{
 		Ic_request_id:  reqID,
@@ -277,13 +280,13 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 	// to_tx  res.TxId
 
 	if err != nil {
-		f.logger.Errorf("Fabric ChainId %s Chaincode %s %s has error %v", chainId, inputData.ChainCode, inputData.FunType, err)
+		f.logger.Errorf("Fabric ChainId %s Chaincode %s has error %v", chainId, inputData.Dest.EndpointAddress, err)
 
 		InsectCrossInfo.Tx_status = 2
 		InsectCrossInfo.Error = err.Error()
 		store.TargetChainInfo(&InsectCrossInfo)
 		//如果处理失败如何返回信息
-		return entity.GetErrOutPut(), types.NewResult(types.Status_Error, fmt.Sprintf("call chain %s has error : %s", inputData.GetChainId(), err.Error()))
+		return entity.GetErrOutPut(), types.NewResult(types.Status_Error, fmt.Sprintf("call chain %s has error : %s",chainId, err.Error()))
 	}
 
 	InsectCrossInfo.To_tx = res.TxId

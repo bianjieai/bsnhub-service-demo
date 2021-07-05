@@ -13,6 +13,7 @@ type FabricConfig struct {
 	MspUserName string
 
 	OrgCode string
+	TargetChaincodeName string
 }
 
 func (f *FabricConfig) GetSdkConfig(channelId string, nodes []string) core.ConfigProvider {
