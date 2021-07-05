@@ -9,10 +9,10 @@ use crate::state::REQUESTS;
 // Note, you can use StdResult in some functions where you do not
 // make use of the custom errors
 pub fn init(
-    deps: DepsMut,
+    _deps: DepsMut,
     _env: Env,
-    info: MessageInfo,
-    msg: InitMsg,
+    _sinfo: MessageInfo,
+    _msg: InitMsg,
 ) -> Result<InitResponse, ContractError> {
     Ok(InitResponse::default())
 }
@@ -21,7 +21,7 @@ pub fn init(
 pub fn handle(
     deps: DepsMut,
     _env: Env,
-    info: MessageInfo,
+    _info: MessageInfo,
     msg: HandleMsg,
 ) -> Result<HandleResponse, ContractError> {
     match msg {
@@ -35,7 +35,7 @@ pub fn call_service(deps: DepsMut, request_id:String, endpoint_address: HumanAdd
     if executed.is_ok() {
         Err(ContractError::Unauthorized{})
     }else{
-        let msg = to_binary(&call_data)?;
+        let msg = call_data;
         let msgs = vec![CosmosMsg::Wasm(WasmMsg::Execute {
             contract_addr: endpoint_address,
             msg: msg,
@@ -52,6 +52,6 @@ pub fn call_service(deps: DepsMut, request_id:String, endpoint_address: HumanAdd
     }
 }
 
-pub fn query(deps: Deps, _env: Env, msg: QueryMsg) -> StdResult<Binary> {
+pub fn query(_deps: Deps, _env: Env, _msg: QueryMsg) -> StdResult<Binary> {
     to_binary("no query function")
 }
