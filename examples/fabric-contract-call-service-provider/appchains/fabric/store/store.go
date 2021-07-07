@@ -14,7 +14,7 @@ func StoreProviderAppInfo(data *entity.FabricChainInfo) error {
 
 	common.Logger.Infof("Store Provider AppInfo data to mysql,data:%v", data)
 
-	sql := fmt.Sprintf("INSERT INTO %s (chainId,appCode,channelId,nodes,cityCode,status,createTime) values (?,?,?,?,?,?,?)", _TabName_Provider)
+	sql := fmt.Sprintf("INSERT INTO %s (chainId,appCode,channelId,nodes,cityCode,targetChaincodeName,status,createTime) values (?,?,?,?,?,?,?,?)", _TabName_Provider)
 
 	data.Status = 1
 	data.CreateTime = time.Now()
@@ -26,6 +26,7 @@ func StoreProviderAppInfo(data *entity.FabricChainInfo) error {
 		data.ChannelId,
 		data.NodeName,
 		data.CityCode,
+		data.TargetChaincodeName,
 		data.Status,
 		creatTime)
 
@@ -44,12 +45,13 @@ func UpdateProviderAppInfo(data *entity.FabricChainInfo) error {
 
 	common.Logger.Infof("Store Provider AppInfo data to mysql,data:%v", data)
 
-	sql := fmt.Sprintf("update %s set channelId = ?,nodes =? where chainId = ?", _TabName_Provider)
+	sql := fmt.Sprintf("update %s set channelId = ?,nodes =?,targetChaincodeName=? where chainId = ?", _TabName_Provider)
 
 	lastID, rows, err := mysql.Exec(
 		sql,
 		data.ChannelId,
 		data.NodeName,
+		data.TargetChaincodeName,
 		data.GetChainId(),
 	)
 
@@ -82,7 +84,7 @@ func DeleteProviderAppInfo(chainId string) error {
 func GetProviderAppInfo(chainId string) *entity.FabricChainInfo {
 
 	common.Logger.Infof("Into GetProviderAppInfo method：")
-	querysql := fmt.Sprintf("SELECT id,ChainId,AppCode,ChannelId,Nodes,CityCode,STATUS, CreateTime FROM %s WHERE chainId=%s;", _TabName_Provider, chainId)
+	querysql := fmt.Sprintf("SELECT id,ChainId,AppCode,ChannelId,Nodes,TargetChaincodeName,CityCode,STATUS, CreateTime FROM %s WHERE chainId=%s;", _TabName_Provider, chainId)
 	query := func(rows *sql.Rows) (interface{}, error) {
 
 		var ChainId string
@@ -95,6 +97,7 @@ func GetProviderAppInfo(chainId string) *entity.FabricChainInfo {
 			&data.AppCode,
 			&data.ChannelId,
 			&data.NodeName,
+			&data.TargetChaincodeName,
 			&data.CityCode,
 			&data.Status,
 			&createTime)

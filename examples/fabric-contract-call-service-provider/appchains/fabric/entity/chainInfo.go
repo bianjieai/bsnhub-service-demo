@@ -42,6 +42,8 @@ type FabricChainInfo struct {
 
 	CityCode string
 
+	TargetChaincodeName string
+
 	Status int
 
 	CreateTime time.Time

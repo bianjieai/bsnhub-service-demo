@@ -22,7 +22,6 @@ const (
 	fabric_sdk_config    = "fabric.sdk_config"
 	fabric_msp_user_name = "fabric.msp_user_name"
 	fabric_org_name      = "fabric.org_name"
-	fabric_target_chaincode_name = "fabric.target_chaincode_name"
 	base_mysql_conn      = "base.mysql_conn"
 	base_city_code       = "base.city_code"
 )
@@ -49,7 +48,6 @@ func NewFabricChainHandle(serviceName string, v *viper.Viper, iserviceClient *is
 		MspUserName: v.GetString(fabric_msp_user_name),
 		OrgName:     v.GetString(fabric_org_name),
 		OrgCode:     v.GetString(base_city_code),
-		TargetChaincodeName: v.GetString(fabric_target_chaincode_name),
 	}
 	common.Logger.Infof("fabric config is %v", conf)
 
@@ -237,10 +235,10 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 	}
 
 	chainId := inputData.Dest.ChainID
+	chainInfo := new(entity.FabricChainInfo)
 	fabricChain, ok := f.appChain[chainId]
-
 	if !ok {
-		chainInfo := f.getChainInfo(chainId)
+		chainInfo = f.getChainInfo(chainId)
 		if chainInfo == nil {
 			//不处理或者处理失败
 			//如果不存在该chainId 信息，需要能返回不处理的信号，hub不用返回结果
@@ -264,7 +262,7 @@ func (f *FabricChainHandler) Callback(reqCtxID, reqID, input string) (output str
 	var res *entity.FabricRespone
 	args := []string{"callService", crossData.Header.ReqSequence, inputData.Dest.EndpointAddress, string(inputData.CallData), inputData.Dest.SubChainID}
 
-	res, err = fabricChain.Invoke(f.sdkConf.TargetChaincodeName, args)
+	res, err = fabricChain.Invoke(chainInfo.TargetChaincodeName, args)
 
 	InsectCrossInfo := entity.CrossChainInfo{
 		Ic_request_id:  reqID,
