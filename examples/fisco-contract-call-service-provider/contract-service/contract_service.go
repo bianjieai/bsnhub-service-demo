@@ -113,7 +113,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	}
 	txHash = receipt.TransactionHash
 	for _, log := range receipt.Logs {
-		if !strings.EqualFold(log.Address, cs.FISCOClient.BaseConfig.IServiceCoreAddr) {
+		if !strings.EqualFold(log.Address, chainParams.TargetCoreAddr) {
 			continue
 		}
 

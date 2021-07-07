@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"strconv"
 )
 
 type Header struct {
@@ -54,9 +55,13 @@ type Result struct {
 }
 
 
-// GetChainID returns the unique chain id from the specified chain params
-func GetChainID(params config.ChainParams) string {
-	return fmt.Sprintf("%s-%d-%d", "fisco", params.GroupID, params.ChainID)
+func GetChainIDString(chainID int64) string {
+	return strconv.FormatInt(chainID, 10)
+}
+
+func GetChainID(chainID int64) string {
+	//return strconv.FormatInt(chainID,10)
+	return fmt.Sprintf("%s-%d-%d", "fisco", 11, chainID)
 }
 
 // GetChainIDFromBytes returns the unique chain id from the given chain params bytes
@@ -67,5 +72,5 @@ func GetChainIDFromBytes(params []byte) (string, error) {
 		return "", err
 	}
 
-	return GetChainID(chainParams), nil
+	return GetChainID(chainParams.ChainID), nil
 }

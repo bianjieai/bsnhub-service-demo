@@ -17,34 +17,33 @@ import (
 const (
 	Prefix = "fisco"
 
-	ChainId        = "chainId"
-	ConnectionType = "connection_type"
-	CAFile         = "ca_file"
-	CertFile       = "cert_file"
-	KeyFile        = "key_file"
-	SMCrypto       = "sm_crypto"
-	PrivateKeyFile = "priv_key_file"
-	IServiceCoreAddr   = "iservice_core_addr"
+	ChainId          = "chainId"
+	ConnectionType   = "connection_type"
+	CAFile           = "ca_file"
+	CertFile         = "cert_file"
+	KeyFile          = "key_file"
+	SMCrypto         = "sm_crypto"
+	PrivateKeyFile   = "priv_key_file"
 )
 
 // BaseConfig defines the base config
 type BaseConfig struct {
-	IsHTTP     bool
-	ChainId    string
-	CAFile     string
-	KeyFile    string
-	CertFile   string
-	PrivateKey []byte
-	IsSMCrypto bool
-	NodesMap   map[string]string
-	IServiceCoreAddr string
+	IsHTTP           bool
+	ChainId          string
+	CAFile           string
+	KeyFile          string
+	CertFile         string
+	PrivateKey       []byte
+	IsSMCrypto       bool
+	NodesMap         map[string]string
 }
 
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
-	NodeURL []string `json:"nodes"`
-	ChainID int64    `json:"chain_id"`
-	GroupID int      `json:"group_id"`
+	NodeURL        []string `json:"nodes"`
+	ChainID        int64    `json:"chainId"`
+	GroupID        int      `json:"groupId"`
+	TargetCoreAddr string   `json:"targetCoreAddr"`
 }
 
 // Config defines the specific chain config
@@ -62,7 +61,6 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 	smCrypto := v.GetBool(common.GetConfigKey(Prefix, SMCrypto))
 	privKeyFile := v.GetString(common.GetConfigKey(Prefix, PrivateKeyFile))
 	chainId := v.GetString(common.GetConfigKey(Prefix, ChainId))
-	iServiceCoreAddr := v.GetString(common.GetConfigKey(Prefix, IServiceCoreAddr))
 	config := new(BaseConfig)
 
 	if strings.EqualFold(connType, "rpc") {
@@ -93,7 +91,6 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 	config.CertFile = certFile
 	config.KeyFile = keyFile
 	config.NodesMap = v.GetStringMapString(common.ConfigKeyNodes)
-	config.IServiceCoreAddr = iServiceCoreAddr
 	common.Logger.Infof("config fisco nods : %v", config.NodesMap)
 
 	return config, nil
@@ -147,7 +144,7 @@ func GetFiscoChainID(ChainID string) int64 {
 }
 
 // GetGroupID returns the unique fisco group id from the ChainID
-func GetFiscoGroupID(ChainID string) int  {
+func GetFiscoGroupID(ChainID string) int {
 	chainInfos := strings.Split(ChainID, "-")
 	fiscoGroupID, _ := strconv.Atoi(chainInfos[1])
 	return fiscoGroupID

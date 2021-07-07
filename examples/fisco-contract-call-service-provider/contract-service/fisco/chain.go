@@ -50,7 +50,7 @@ func (f *FISCOChain) InstantiateClient(
 		return fmt.Errorf("failed to connect to fisco node: %s", err)
 	}
 
-	iServiceCore, err := NewTargetCoreEx(ethcmn.HexToAddress(f.BaseConfig.IServiceCoreAddr), client)
+	targetCore, err := NewTargetCoreEx(ethcmn.HexToAddress(chainParams.TargetCoreAddr), client)
 	if err != nil {
 		common.Logger.Errorf("failed to instantiate the iservice core contract: %s", err)
 	}
@@ -60,7 +60,7 @@ func (f *FISCOChain) InstantiateClient(
 		return fmt.Errorf("failed to parse iService Core Extension ABI: %s", err)
 	}
 	f.Client = client
-	f.TargetCoreSession = &TargetCoreExSession{Contract: iServiceCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
+	f.TargetCoreSession = &TargetCoreExSession{Contract: targetCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
 	f.TargetCoreABI = targetCoreABI
 	return nil
 }
