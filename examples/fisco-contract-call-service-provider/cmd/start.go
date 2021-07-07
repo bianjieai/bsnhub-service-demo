@@ -12,6 +12,10 @@ import (
 	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
 )
 
+const (
+	_HttpPort = "base.http_port"
+)
+
 func StartCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "start",
@@ -60,7 +64,12 @@ func StartCmd() *cobra.Command {
 			// set test api handle
 			server.SetTestCallBack(contractService.Callback)
 
-			go server.StartWebServer(chainManager)
+			httpPort := config.GetInt(_HttpPort)
+			if httpPort == 0 {
+				httpPort = 8083
+			}
+
+			go server.StartWebServer(chainManager, httpPort)
 			appInstance.Start()
 
 			return nil

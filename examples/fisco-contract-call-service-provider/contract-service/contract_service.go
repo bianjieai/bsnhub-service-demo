@@ -59,7 +59,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 		cs.Logger.Infof("request processed, result: %s, output: %s", result, output)
 	}()
-
+	cs.Logger.Infof("Input is %s ", input)
 	var request types.Input
 	err := json.Unmarshal([]byte(input), &request)
 	if err != nil {
@@ -113,7 +113,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	}
 	txHash = receipt.TransactionHash
 	for _, log := range receipt.Logs {
-		if !strings.EqualFold(log.Address, cs.FISCOClient.BaseConfig.IServiceCoreAddr) {
+		if !strings.EqualFold(log.Address, chainParams.TargetCoreAddr) {
 			continue
 		}
 

@@ -1,0 +1,25 @@
+base:
+  app_chain_type: fabric # application chain type
+  store_path: .db # store path
+  http_port: 18051
+  mysql_conn: root:123456@tcp(127.0.0.1:3306)/relayer?charset=utf8
+  city_code: ORG12345
+
+service:
+  service_name: cc-contract-call
+
+# irita-hub config
+hub:
+  chain_id: irita
+  node_rpc_addr: http://127.0.0.1:26657
+  node_grpc_addr: 127.0.0.1:9090
+  key_path: .keys
+  key_name: node0
+  passphrase: 1234567890
+
+# fabric config
+fabric:
+  sdk_config: /Users/bianjie/BSN/bsnhub-service-demo/examples/fabric-contract-call-service-provider/appchains/fabric/config/conf/sdkconfig.yaml
+  msp_user_name: Admin
+  org_name: org1.example.com
+  target_chaincode_name: target

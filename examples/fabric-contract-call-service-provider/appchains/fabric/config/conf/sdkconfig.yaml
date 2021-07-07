@@ -1,0 +1,94 @@
+name: "default-network"
+description: "测试环境"
+version: 1.4.0
+client:
+  peer:
+    eventService:
+      type: eventhub
+  organization: quanzhou.cmpay.com
+  logging:
+    level: info
+  cryptoconfig:
+    #
+    path: /Users/bianjie/BSN/crypto-config
+    #path: /opt/app/fabric/cli/user/member1.example.com/Admin-peer0.member1.example.com
+  credentialStore:
+    path: /Users/bianjie/BSN/crypto-config/certtmp/
+    cryptoStore:
+      path: /Users/bianjie/BSN/crypto-config/msp
+  BCCSP:
+    security:
+      enabled: true
+      default:
+        provider: "SW"
+      hashAlgorithm: "SHA2"
+      softVerify: true
+      level: 256
+  tlsCerts:
+    systemCertPool: true
+    client:
+      key:
+        path: /Users/bianjie/BSN/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+        #path: /opt/app/fabric/cli/user/member1.example.com/Admin-peer0.member1.example.com/tls/client.key
+      cert:
+        path: /Users/bianjie/BSN/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+        #path: /opt/app/fabric/cli/user/member1.example.com/Admin-peer0.member1.example.com/tls/client.crt
+channels:
+  mychannel: # 通道名
+    peers:
+      peer0.org1.example.com: #访问节点
+        endorsingPeer: true
+        chaincodeQuery: true
+        ledgerQuery: true
+        eventSource: true
+    policies:
+      queryChannelConfig:
+        minResponses: 1
+        maxTargets: 1
+        retryOpts:
+          attempts: 5
+          initialBackoff: 500ms
+          maxBackoff: 5s
+          backoffFactor: 2.0
+organizations:
+  org1.example.com: # 组织名
+    mspid: Org1MSP #组织mspId
+    cryptoPath: peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+    #用户证书存放文件路径
+    #cryptoPath: msp/
+    peers: # 组织下节点列表
+      - peer0.org1.example.com
+orderers: #
+  orderer1.example.com: #order名称
+    url: orderer1.example.com:7050 #order链接地址 orderer1.reddate.com
+    grpcOptions:
+      ssl-target-name-override: orderer1.example.com #与 order名称 相同
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts: #oeder tls 证书
+      path: /Users/bianjie/BSN/crypto-config/ordererOrganizations/example.com/orderers/orderer1.example.com/tls/ca.crt
+      #path: /opt/app/fabric/cli/user/member1.example.com/Admin-peer0.member1.example.com/tlsca.member1.example.com-cert.pem
+peers:
+  peer0.org1.example.com:
+    url: peer0.org1.example.com:7051
+    eventUrl: peer0.org1.example.com:7053 #peer监听事件url
+    grpcOptions:
+      ssl-target-name-override: peer0.org1.example.com
+      keep-alive-time: 0s
+      keep-alive-timeout: 20s
+      keep-alive-permit: false
+      fail-fast: false
+      allow-insecure: false
+    tlsCACerts:
+      path: /Users/bianjie/BSN/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+      #path: /opt/app/fabric/cli/user/member1.example.com/Admin-peer0.member1.example.com/tls/ca.crt
+# 替换规则
+#entityMatchers:
+#  orderer:
+#  - pattern: (\w*)orderer.example.com(\w*)
+#    urlSubstitutionExp: orderer.example.com:7050
+#    sslTargetOverrideUrlSubstitutionExp: orderer.example.com
+#    mappedHost: orderer.example.com
