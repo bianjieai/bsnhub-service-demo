@@ -1,0 +1,44 @@
+{
+  "input": {
+    "type": "object",
+    "properties": {
+      "group_id": {
+        "description": "group id",
+        "type": "integer"
+      },
+      "chain_id": {
+        "description": "chain id",
+        "type": "integer"
+      },
+      "contract_address": {
+        "description": "contract address",
+        "type": "string"
+      },
+      "call_data": {
+        "description": "abi-encoded call data",
+        "type": "string"
+      },
+      "height": {
+        "description": "optional block height",
+        "type": "integer"
+      }
+    }
+  },
+  "output": {
+    "type": "object",
+    "properties": {
+      "result": {
+        "description": "abi-encoded call result",
+        "type": "string"
+      },
+      "status": {
+        "description": "transaction status",
+        "type": "boolean"
+      },
+      "tx_hash": {
+        "description": "transaction hash",
+        "type": "string"
+      }
+    }
+  }
+}

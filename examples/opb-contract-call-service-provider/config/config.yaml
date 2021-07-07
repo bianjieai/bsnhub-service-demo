@@ -1,0 +1,37 @@
+base:
+  app_chain_type: fisco # application chain type
+  store_path: .db # store path
+  http_port: 8083
+
+# iservice config
+iservice:
+  chain_id: irita
+  node_rpc_addr: http://127.0.0.1:26657
+  node_grpc_addr: 127.0.0.1:9090
+  key_path: .keys/iservice
+  key_name: node0
+  passphrase: 1234567890
+
+service:
+  service_name: cc-contract-call
+
+# fisco config
+fisco:
+  chainId: fisco-1-1
+  connection_type: channel
+  ca_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/ca.crt
+  cert_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/sdk.crt
+  key_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/sdk.key
+  sm_crypto: true
+  priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/key.pem
+  nodes:
+    fisco1.bsnbase.com: 60.247.61.162:20200
+    fisco2.bsnbase.com: 60.247.61.162:20201
+
+# mysql config
+mysql:
+  db_name: relayer
+  db_user_name: root
+  db_user_passphrase: 123456
+  host: localhost
+  port: 3306
