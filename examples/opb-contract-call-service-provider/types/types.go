@@ -3,7 +3,7 @@ package types
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/contract-service/opb/config"
 	"strconv"
 )
 
@@ -61,7 +61,7 @@ func GetChainIDString(chainID int64) string {
 
 func GetChainID(chainID int64) string {
 	//return strconv.FormatInt(chainID,10)
-	return fmt.Sprintf("%s-%d-%d", "fisco", 11, chainID)
+	return fmt.Sprintf("%s-%d", "opb", chainID)
 }
 
 // GetChainIDFromBytes returns the unique chain id from the given chain params bytes

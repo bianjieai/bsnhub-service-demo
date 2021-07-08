@@ -1,7 +1,7 @@
 package server
 
 import (
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/common"
 	"github.com/gin-gonic/gin"
 	"github.com/irisnet/service-sdk-go/service"
 	"io/ioutil"
@@ -43,11 +43,11 @@ func (srv *HTTPService) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (srv *HTTPService) createRouter() {
 	r := gin.Default()
 	api := r.Group("/api/v0")
-	fiscobcos := api.Group("/fiscobcos")
+	opb := api.Group("/opb")
 	{
-		fiscobcos.POST("/chains", srv.AddChain)
-		fiscobcos.GET("/chains", srv.GetChains)
-		fiscobcos.POST("/delete/:chainid", srv.DeleteChain)
+		opb.POST("/chains", srv.AddChain)
+		opb.GET("/chains", srv.GetChains)
+		opb.POST("/delete/:chainid", srv.DeleteChain)
 	}
 
 	r.GET("/health", srv.ShowHealth)

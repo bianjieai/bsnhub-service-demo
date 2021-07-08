@@ -3,8 +3,8 @@ package iservice
 import (
 	"encoding/json"
 
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/mysql"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/types"
 	servicesdk "github.com/irisnet/service-sdk-go"
 	"github.com/irisnet/service-sdk-go/service"
 	sdk "github.com/irisnet/service-sdk-go/types"

@@ -4,23 +4,23 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
-	"strings"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/contract-service/opb"
 
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
 	ethcmn "github.com/ethereum/go-ethereum/common"
+	"github.com/bianjieai/irita-sdk-go/modules/wasm"
 
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/mysql"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/contract-service/opb/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/mysql"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/server"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/types"
 )
 
 // ContractService defines the contract service
 type ContractService struct {
-	FISCOClient *fisco.FISCOChain
+	opbClient   *opb.OpbChain
 	Logger      *log.Logger
 }
 
@@ -32,7 +32,7 @@ func BuildContractService(v *viper.Viper, chainManager *server.ChainManager) (Co
 	}
 
 	return ContractService{
-		FISCOClient: fisco.NewFISCOChain(*baseConfig, chainManager),
+		opbClient: opb.NewOpbChain(*baseConfig, chainManager),
 	}, nil
 }
 
@@ -79,7 +79,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	var requestIDByte32 [32]byte
 	copy(requestIDByte32[:], requestID)
 
-	chainParams, err := cs.FISCOClient.ChainManager.GetChainParams(request.Dest.ID)
+	chainParams, err := cs.opbClient.ChainManager.GetChainParams(request.Dest.ID)
 	if err != nil {
 		res.Code = 204
 		res.Message = "chain params not exist"
@@ -89,50 +89,35 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 	mysql.OnServiceRequestReceived(reqID, request.Dest.ID)
 
-	// instantiate the fisco client with the specified group id and chain id
-	err = cs.FISCOClient.InstantiateClient(chainParams)
+	// instantiate the opb client with the specified group id and chain id
+	err = cs.opbClient.InstantiateClient(chainParams)
 	if err != nil {
 		res.Code = 500
-		res.Message = "failed to connect to the fisco node"
+		res.Message = "failed to connect to the opb node"
 
 		return
 	}
 
-	tx, _, err := cs.FISCOClient.TargetCoreSession.CallService(requestIDByte32, contractAddress, request.CallData)
+	execAbi := wasm.NewContractABI().
+		WithMethod("call_service").
+		WithArgs("request_id", requestIDByte32).
+		WithArgs("endpoint_address", contractAddress).
+		WithArgs("call_data", request.CallData)
+	resultTx, err := cs.opbClient.OpbClient.WASM.Execute(chainParams.TargetCoreAddr, execAbi, nil, cs.opbClient.BuildBaseTx())
 	if err != nil {
 		mysql.TxErrCollection(reqID, err.Error())
 		res.Code = 500
 		res.Message = err.Error()
 	}
+	txHash = resultTx.Hash
 
-	receipt, err := cs.FISCOClient.WaitForReceipt(tx, "CallService")
+	err = cs.opbClient.WaitForSuccess(resultTx.Hash, "SetResponse")
 	if err != nil {
 		mysql.TxErrCollection(reqID, err.Error())
 		res.Code = 500
 		res.Message = err.Error()
 	}
-	txHash = receipt.TransactionHash
-	for _, log := range receipt.Logs {
-		if !strings.EqualFold(log.Address, chainParams.TargetCoreAddr) {
-			continue
-		}
-
-		data, err := hex.DecodeString(log.Data[2:])
-		if err != nil {
-			cs.Logger.Errorf("failed to decode the log data: %s", err)
-			continue
-		}
-
-		var event fisco.TargetCoreExCrossChainResponseSent
-		err = cs.FISCOClient.TargetCoreABI.Unpack(&event, "CrossChainResponseSent", data)
-		if err != nil {
-			cs.Logger.Errorf("failed to unpack the log data: %s", err)
-			continue
-		}
-
-		callResult = event.Result
-		break
-	}
+	callResult = resultTx.Data
 
 	mysql.OnContractTxSend(reqID, txHash)
 

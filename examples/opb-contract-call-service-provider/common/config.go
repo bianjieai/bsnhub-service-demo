@@ -13,7 +13,7 @@ const (
 
 	ConfigKeyServiceName = "service.service_name"
 
-	ConfigKeyNodes = "fisco.nodes"
+	ConfigKeyNodes = "opb.nodes"
 )
 
 // LoadYAMLConfig loads the YAML config file

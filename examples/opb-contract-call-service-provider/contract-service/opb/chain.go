@@ -2,85 +2,90 @@ package opb
 
 import (
 	"fmt"
-	"github.com/FISCO-BCOS/go-sdk/abi"
-	fiscoclient "github.com/FISCO-BCOS/go-sdk/client"
-	"github.com/FISCO-BCOS/go-sdk/core/types"
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"strings"
-
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
-	fiscocfg "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/server"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/common"
+	opbcfg "github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/contract-service/opb/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/server"
+	sdk "github.com/bianjieai/irita-sdk-go"
+	sdktypes "github.com/bianjieai/irita-sdk-go/types"
 )
 
-// FISCOChain defines the FISCO chain
-type FISCOChain struct {
-	Client              *fiscoclient.Client
+// OpbChain defines the Opb chain
+type OpbChain struct {
+	OpbClient sdk.IRITAClient
 	ChainManager        *server.ChainManager
-	BaseConfig          fiscocfg.BaseConfig
-	TargetCoreSession *TargetCoreExSession // iService Core Extension contract session
-	TargetCoreABI     abi.ABI                // parsed iService Core Extension ABI
+	BaseConfig          opbcfg.BaseConfig
 }
 
-// NewFISCOChain constructs a new FISCOChain instance
-func NewFISCOChain(
-	baseConfig fiscocfg.BaseConfig,
+// NewOpbChain constructs a new OpbChain instance
+func NewOpbChain(
+	baseConfig opbcfg.BaseConfig,
 	chainManager *server.ChainManager,
-) *FISCOChain {
-	return &FISCOChain{
+) *OpbChain {
+	return &OpbChain{
 		BaseConfig:   baseConfig,
 		ChainManager: chainManager,
 	}
 }
 
-// InstantiateClient instantiates the fisco client according to the given chain params
-func (f *FISCOChain) InstantiateClient(
-	chainParams fiscocfg.ChainParams,
+// BuildBaseTx builds a base tx
+func (opb *OpbChain) BuildBaseTx() sdktypes.BaseTx {
+	return sdktypes.BaseTx{
+		From:     opb.BaseConfig.KeyName,
+		Password: opb.BaseConfig.Passphrase,
+	}
+}
+
+// InstantiateClient instantiates the opb client according to the given chain params
+func (f *OpbChain) InstantiateClient(
+	chainParams opbcfg.ChainParams,
 ) error {
-	config := fiscocfg.Config{
+	config := opbcfg.Config{
 		BaseConfig:  f.BaseConfig,
 		ChainParams: chainParams,
 	}
 
-	clientConfig := fiscocfg.BuildClientConfig(config)
-
-	client, err := fiscoclient.Dial(clientConfig)
-	if err != nil {
-		common.Logger.Errorf("failed to connect to fisco node: %s", err)
-		return fmt.Errorf("failed to connect to fisco node: %s", err)
+	//将接口传递的节点名称通过配置转换为 节点地址，如果不在配置中，不转换
+	//随机取一个传入的node
+	nodeName := opbcfg.RandURL(config.ChainParams.NodeURLs)
+	var rpcAddr string
+	var grpcAddr string
+	//获取配置的nodeURL
+	rpcAddrstr, ok := config.RpcAddrsMap[nodeName]
+	if ok {
+		rpcAddr = rpcAddrstr
+	}
+	grpcAddrstr, ok := config.GrpcAddrsMap[nodeName]
+	if ok {
+		grpcAddr = grpcAddrstr
 	}
 
-	targetCore, err := NewTargetCoreEx(ethcmn.HexToAddress(chainParams.TargetCoreAddr), client)
-	if err != nil {
-		common.Logger.Errorf("failed to instantiate the iservice core contract: %s", err)
+	options := []sdktypes.Option{
+		sdktypes.TimeoutOption(config.Timeout),
+		sdktypes.CachedOption(true),
 	}
 
-	targetCoreABI, err := abi.JSON(strings.NewReader(TargetCoreExABI))
+	clientConfig, err := sdktypes.NewClientConfig(rpcAddr, grpcAddr, config.ChainId, options...)
+
 	if err != nil {
-		return fmt.Errorf("failed to parse iService Core Extension ABI: %s", err)
+		common.Logger.Errorf("failed to get the sdk clientConfig: %s", err)
+		return fmt.Errorf("failed to get the sdk clientConfig: %s", err)
 	}
-	f.Client = client
-	f.TargetCoreSession = &TargetCoreExSession{Contract: targetCore, CallOpts: *client.GetCallOpts(), TransactOpts: *client.GetTransactOpts()}
-	f.TargetCoreABI = targetCoreABI
+
+	opbClient := sdk.NewIRITAClient(clientConfig)
+	f.OpbClient = opbClient
 	return nil
 }
 
-// CallContract calls the specified contract with the given contract address and data
+// waitForSuccess waits for the receipt of the given tx
+func (opb *OpbChain) WaitForSuccess(txHash string,name string) error {
+	common.Logger.Infof("%s: transaction sent to %s, hash: %s", name, opb.BaseConfig.ChainId, txHash)
 
-// WaitForReceipt waits for the receipt of the given tx
-func (f *FISCOChain) WaitForReceipt(tx *types.Transaction, name string) (*types.Receipt, error) {
-	common.Logger.Infof("%s: transaction sent, hash: %s", name, tx.Hash().Hex())
-
-	receipt, err := f.Client.WaitMined(tx)
-	if err != nil {
-		return nil, fmt.Errorf("failed to mint the transaction %s: %s", tx.Hash().Hex(), err)
+	tx, _:= opb.OpbClient.QueryTx(txHash)
+	if tx.Result.Code != 0{
+		return fmt.Errorf("transaction %s execution failed: %s", txHash, tx.Result.Log)
 	}
 
-	if receipt.Status != types.Success {
-		return nil, fmt.Errorf("transaction %s execution failed: %s", tx.Hash().Hex(), receipt.GetErrorMessage())
-	}
+	common.Logger.Infof("%s: transaction %s execution succeeded", name, txHash)
 
-	common.Logger.Infof("%s: transaction %s execution succeeded", name, tx.Hash().Hex())
-
-	return receipt, nil
+	return nil
 }

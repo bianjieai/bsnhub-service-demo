@@ -2,9 +2,9 @@ package server
 
 import (
 	"encoding/json"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/contract-service/fisco/config"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/store"
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/types"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/contract-service/opb/config"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/store"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/types"
 )
 
 // ChainManager defines a service for app chains management

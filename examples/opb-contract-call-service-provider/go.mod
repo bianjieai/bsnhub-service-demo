@@ -1,7 +1,8 @@
-module github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider
+module github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider
 
 require (
-	github.com/FISCO-BCOS/go-sdk v0.10.1
+	github.com/OneOfOne/xxhash v1.2.5 // indirect
+	github.com/bianjieai/irita-sdk-go v1.1.1-0.20210707070124-79ed0124b3de
 	github.com/cockroachdb/pebble v0.0.0-20210406003833-3d4c32f510a8
 	github.com/ethereum/go-ethereum v1.9.18
 	github.com/gin-gonic/gin v1.7.1
@@ -10,7 +11,6 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v1.1.1
 	github.com/spf13/viper v1.7.1
-	github.com/tidwall/gjson v1.6.1
 )
 
 replace (

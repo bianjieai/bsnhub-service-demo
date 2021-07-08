@@ -1,5 +1,5 @@
 base:
-  app_chain_type: fisco # application chain type
+  app_chain_type: opb # application chain type
   store_path: .db # store path
   http_port: 8083
 
@@ -15,18 +15,18 @@ iservice:
 service:
   service_name: cc-contract-call
 
-# fisco config
-fisco:
-  chainId: fisco-1-1
-  connection_type: channel
-  ca_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/ca.crt
-  cert_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/sdk.crt
-  key_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/sdk.key
-  sm_crypto: true
-  priv_key_file: /Users/bianjie/BSN/bsnhub-service-relayer/bsn-irita-fisco-relayer/keys/key.pem
-  nodes:
-    fisco1.bsnbase.com: 60.247.61.162:20200
-    fisco2.bsnbase.com: 60.247.61.162:20201
+# opb config
+opb:
+  chain_id: opb-1
+  rpc_addrs:
+    opb1.bsnbase.com: 10.1.4.140:26657
+  grpc_addrs:
+    opb1.bsnbase.com: 10.1.4.140:9090
+  timeout: 10
+  key_path: .keys
+  key_name: node1
+  passphrase: 1234567890
+  monitor_interval: 1 # chain monitoring interval in seconds
 
 # mysql config
 mysql:

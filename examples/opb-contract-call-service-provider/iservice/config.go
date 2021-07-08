@@ -8,7 +8,7 @@ import (
 
 	"github.com/irisnet/service-sdk-go/types"
 
-	"github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/common"
 )
 
 // default config variables

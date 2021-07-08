@@ -3,7 +3,7 @@ package mysql
 import (
 	"github.com/spf13/viper"
 
-	cfg "github.com/bianjieai/bsnhub-service-demo/examples/fisco-contract-call-service-provider/common"
+	cfg "github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/common"
 )
 
 const (

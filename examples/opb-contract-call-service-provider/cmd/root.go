@@ -10,8 +10,8 @@ import (
 // rootCmd is the entry point
 var (
 	rootCmd = &cobra.Command{
-		Use:   "fisco-contract-call-sp",
-		Short: "fisco service provider daemon command line interface",
+		Use:   "opb-contract-call-sp",
+		Short: "opb service provider daemon command line interface",
 	}
 )
 
