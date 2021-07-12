@@ -1,8 +1,8 @@
 package server
 
 import (
-	"bsn-irita-fabric-provider/appchains"
-	"bsn-irita-fabric-provider/common"
+	"bsn-irita-fabric-provider-gm/appchains"
+	"bsn-irita-fabric-provider-gm/common"
 	"github.com/gin-gonic/gin"
 
 	"io/ioutil"

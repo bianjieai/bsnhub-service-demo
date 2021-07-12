@@ -1,7 +1,7 @@
 package server
 
 import (
-	"bsn-irita-fabric-provider/appchains"
+	"bsn-irita-fabric-provider-gm/appchains"
 	"fmt"
 )
 

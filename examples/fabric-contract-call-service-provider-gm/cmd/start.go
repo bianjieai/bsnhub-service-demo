@@ -1,12 +1,12 @@
 package main
 
 import (
-	"bsn-irita-fabric-provider/appchains"
-	"bsn-irita-fabric-provider/iservice"
-	"bsn-irita-fabric-provider/server"
+	"bsn-irita-fabric-provider-gm/appchains"
+	"bsn-irita-fabric-provider-gm/iservice"
+	"bsn-irita-fabric-provider-gm/server"
 	"github.com/spf13/cobra"
 
-	"bsn-irita-fabric-provider/common"
+	"bsn-irita-fabric-provider-gm/common"
 )
 
 const (

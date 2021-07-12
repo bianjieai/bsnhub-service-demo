@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"bsn-irita-fabric-provider/common"
+	"bsn-irita-fabric-provider-gm/common"
 	"encoding/hex"
 	"encoding/json"
 	"github.com/BSNDA/fabric-sdk-go-gm/pkg/client/channel"

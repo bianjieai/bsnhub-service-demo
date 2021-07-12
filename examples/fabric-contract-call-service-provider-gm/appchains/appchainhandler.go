@@ -1,8 +1,8 @@
 package appchains
 
 import (
-	"bsn-irita-fabric-provider/appchains/fabric"
-	"bsn-irita-fabric-provider/iservice"
+	"bsn-irita-fabric-provider-gm/appchains/fabric"
+	"bsn-irita-fabric-provider-gm/iservice"
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 )

@@ -6,8 +6,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"bsn-irita-fabric-provider/common"
-	"bsn-irita-fabric-provider/iservice"
+	"bsn-irita-fabric-provider-gm/common"
+	"bsn-irita-fabric-provider-gm/iservice"
 )
 
 var (
@@ -31,8 +31,6 @@ func KeysAddCmd() *cobra.Command {
 			} else {
 				configFileName = args[2]
 			}
-
-			common.Logger.Infof("configFileName:%s", configFileName)
 
 			config, err := common.LoadYAMLConfig(configFileName)
 			if err != nil {

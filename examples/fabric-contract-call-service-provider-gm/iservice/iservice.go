@@ -1,12 +1,12 @@
 package iservice
 
 import (
-	"bsn-irita-fabric-provider/common"
+	"bsn-irita-fabric-provider-gm/common"
 	"encoding/json"
 
-	"bsn-irita-fabric-provider/appchains/fabric/entity"
-	txStore "bsn-irita-fabric-provider/appchains/fabric/store"
-	"bsn-irita-fabric-provider/types"
+	"bsn-irita-fabric-provider-gm/appchains/fabric/entity"
+	txStore "bsn-irita-fabric-provider-gm/appchains/fabric/store"
+	"bsn-irita-fabric-provider-gm/types"
 	servicesdk "github.com/irisnet/service-sdk-go"
 	"github.com/irisnet/service-sdk-go/service"
 	sdk "github.com/irisnet/service-sdk-go/types"

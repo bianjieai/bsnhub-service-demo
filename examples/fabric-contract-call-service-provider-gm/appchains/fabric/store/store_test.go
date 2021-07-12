@@ -1,7 +1,7 @@
 package store
 
 import (
-	"bsn-irita-fabric-provider/appchains/fabric/entity"
+	"bsn-irita-fabric-provider-gm/appchains/fabric/entity"
 	"fmt"
 	"testing"
 )

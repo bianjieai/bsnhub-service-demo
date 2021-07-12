@@ -1,10 +1,10 @@
 package fabric
 
 import (
-	"bsn-irita-fabric-provider/appchains/fabric/config"
-	"bsn-irita-fabric-provider/appchains/fabric/entity"
-	logging "bsn-irita-fabric-provider/common"
-	"bsn-irita-fabric-provider/errors"
+	"bsn-irita-fabric-provider-gm/appchains/fabric/config"
+	"bsn-irita-fabric-provider-gm/appchains/fabric/entity"
+	logging "bsn-irita-fabric-provider-gm/common"
+	"bsn-irita-fabric-provider-gm/errors"
 	"fmt"
 	"github.com/BSNDA/fabric-sdk-go-gm/pkg/client/channel"
 	"github.com/BSNDA/fabric-sdk-go-gm/pkg/fabsdk"

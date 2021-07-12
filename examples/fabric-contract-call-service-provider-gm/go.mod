@@ -4,9 +4,13 @@ go 1.14
 
 require (
 	github.com/BSNDA/fabric-sdk-go-gm v0.0.0
+	github.com/Shopify/sarama v1.29.1 // indirect
 	github.com/VividCortex/gohistogram v1.0.0 // indirect
+	github.com/fsouza/go-dockerclient v1.7.3 // indirect
 	github.com/gin-gonic/gin v1.4.0
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/hashicorp/go-version v1.3.0 // indirect
+	github.com/hyperledger/fabric v1.4.3
 	github.com/irisnet/service-sdk-go v1.0.0
 	github.com/op/go-logging v0.0.0-20160315200505-970db520ece7 // indirect
 	github.com/pkg/errors v0.9.1
