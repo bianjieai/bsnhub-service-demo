@@ -8,7 +8,7 @@
 package mysql
 
 import (
-	"bsn-irita-fabric-provider/common"
+	"bsn-irita-fabric-provider-gm/common"
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"

@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/hyperledger/fabric/core/chaincode/shim"
-	"bsn-irita-fabric-provider/appchains/fabric/iservice/chaincode/testChainCode"
+	"bsn-irita-fabric-provider/appchains/fabric/iservice/testchaincode/testChainCode"
 )
 
 func main() {

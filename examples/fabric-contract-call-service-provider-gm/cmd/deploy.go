@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bsn-irita-fabric-provider/appchains"
-	"bsn-irita-fabric-provider/common"
-	"bsn-irita-fabric-provider/iservice"
+	"bsn-irita-fabric-provider-gm/appchains"
+	"bsn-irita-fabric-provider-gm/common"
+	"bsn-irita-fabric-provider-gm/iservice"
 	"github.com/spf13/cobra"
 	"io/ioutil"
 )

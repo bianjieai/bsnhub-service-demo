@@ -1,7 +1,7 @@
 package redconfig
 
 import (
-	config "bsn-irita-fabric-provider/appchains/fabric/config/redconfig/configbackend"
+	config "bsn-irita-fabric-provider-gm/appchains/fabric/config/redconfig/configbackend"
 )
 
 const (

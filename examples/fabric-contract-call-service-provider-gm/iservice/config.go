@@ -8,7 +8,7 @@ import (
 
 	"github.com/irisnet/service-sdk-go/types"
 
-	"bsn-irita-fabric-provider/common"
+	"bsn-irita-fabric-provider-gm/common"
 )
 
 // default config variables
@@ -24,7 +24,7 @@ var (
 )
 
 const (
-	Prefix       = "iservice"
+	Prefix       = "hub"
 	ChainID      = "chain_id"
 	NodeRPCAddr  = "node_rpc_addr"
 	NodeGRPCAddr = "node_grpc_addr"

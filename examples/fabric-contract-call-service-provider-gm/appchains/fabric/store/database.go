@@ -1,8 +1,8 @@
 package store
 
 import (
-	"bsn-irita-fabric-provider/common"
-	"bsn-irita-fabric-provider/common/mysql"
+	"bsn-irita-fabric-provider-gm/common"
+	"bsn-irita-fabric-provider-gm/common/mysql"
 	"fmt"
 )
 

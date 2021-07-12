@@ -1,8 +1,8 @@
 package config
 
 import (
-	"bsn-irita-fabric-provider/appchains/fabric/config/redconfig"
-	"bsn-irita-fabric-provider/appchains/fabric/config/redconfig/configbackend"
+	"bsn-irita-fabric-provider-gm/appchains/fabric/config/redconfig"
+	"bsn-irita-fabric-provider-gm/appchains/fabric/config/redconfig/configbackend"
 	"github.com/BSNDA/fabric-sdk-go-gm/pkg/common/providers/core"
 )
 
