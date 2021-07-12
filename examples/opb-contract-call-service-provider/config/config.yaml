@@ -1,0 +1,37 @@
+base:
+  app_chain_type: opb # application chain type
+  store_path: .db # store path
+  http_port: 8083
+
+# iservice config
+iservice:
+  chain_id: irita
+  node_rpc_addr: http://127.0.0.1:26657
+  node_grpc_addr: 127.0.0.1:9090
+  key_path: .keys/iservice
+  key_name: node0
+  passphrase: 1234567890
+
+service:
+  service_name: cc-contract-call
+
+# opb config
+opb:
+  chain_id: test
+  rpc_addrs:
+    opb1.bsnbase.com: http://127.0.0.1:26658
+  grpc_addrs:
+    opb1.bsnbase.com: 127.0.0.1:9091
+  timeout: 10
+  key_path: .keys/iservice
+  key_name: node1
+  passphrase: 1234567890
+  monitor_interval: 2 # chain monitoring interval in seconds
+
+# mysql config
+mysql:
+  db_name: relayer
+  db_user_name: root
+  db_user_passphrase: 123456
+  host: localhost
+  port: 3306
