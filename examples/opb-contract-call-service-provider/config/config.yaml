@@ -17,16 +17,16 @@ service:
 
 # opb config
 opb:
-  chain_id: opb-1
+  chain_id: test
   rpc_addrs:
-    opb1.bsnbase.com: 10.1.4.140:26657
+    opb1.bsnbase.com: http://127.0.0.1:26658
   grpc_addrs:
-    opb1.bsnbase.com: 10.1.4.140:9090
+    opb1.bsnbase.com: 127.0.0.1:9091
   timeout: 10
-  key_path: .keys
+  key_path: .keys/iservice
   key_name: node1
   passphrase: 1234567890
-  monitor_interval: 1 # chain monitoring interval in seconds
+  monitor_interval: 2 # chain monitoring interval in seconds
 
 # mysql config
 mysql:

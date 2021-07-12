@@ -6,7 +6,7 @@ import (
 
 	"github.com/spf13/viper"
 
-	"github.com/irisnet/service-sdk-go/types"
+	"github.com/bianjieai/irita-sdk-go/types"
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/common"
 )

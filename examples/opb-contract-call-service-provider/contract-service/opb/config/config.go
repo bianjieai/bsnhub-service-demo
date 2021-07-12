@@ -14,29 +14,29 @@ import (
 const (
 	Prefix = "opb"
 
-	ChainId         = "chainId"
-	KeyPath         = "key_path"
-	KeyName         = "key_name"
-	Passphrase      = "passphrase"
-	RpcAddrsMap     = "rpc_addrs"
-	GrpcAddrsMap    = "grpc_addrs"
-	Timeout         = "timeout"
+	ChainId      = "chain_id"
+	KeyPath      = "key_path"
+	KeyName      = "key_name"
+	Passphrase   = "passphrase"
+	RpcAddrsMap  = "rpc_addrs"
+	GrpcAddrsMap = "grpc_addrs"
+	Timeout      = "timeout"
 )
 
 // BaseConfig defines the base config
 type BaseConfig struct {
-	KeyPath         string
-	KeyName         string
-	Passphrase      string
-	RpcAddrsMap     map[string]string
-	GrpcAddrsMap    map[string]string
-	ChainId         string
-	Timeout         uint
+	KeyPath      string
+	KeyName      string
+	Passphrase   string
+	RpcAddrsMap  map[string]string
+	GrpcAddrsMap map[string]string
+	ChainId      string
+	Timeout      uint
 }
 
 // ChainParams defines the params for the specific chain
 type ChainParams struct {
-	NodeURLs        []string `json:"nodes"`
+	NodeURLs       []string `json:"nodes"`
 	ChainID        int64    `json:"chainId"`
 	TargetCoreAddr string   `json:"targetCoreAddr"`
 }
@@ -60,7 +60,6 @@ func NewBaseConfig(v *viper.Viper) (*BaseConfig, error) {
 
 	return config, nil
 }
-
 
 // ValidateBaseConfig validates if the given bytes is valid BaseConfig
 func ValidateBaseConfig(baseCfg []byte) error {

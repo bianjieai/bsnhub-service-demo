@@ -2,8 +2,8 @@ package server
 
 import (
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/common"
+	"github.com/bianjieai/irita-sdk-go/modules/service"
 	"github.com/gin-gonic/gin"
-	"github.com/irisnet/service-sdk-go/service"
 	"io/ioutil"
 	"net/http"
 )

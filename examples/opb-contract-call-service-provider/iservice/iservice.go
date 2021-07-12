@@ -5,10 +5,10 @@ import (
 
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/mysql"
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/types"
-	servicesdk "github.com/irisnet/service-sdk-go"
-	"github.com/irisnet/service-sdk-go/service"
-	sdk "github.com/irisnet/service-sdk-go/types"
-	"github.com/irisnet/service-sdk-go/types/store"
+	servicesdk "github.com/bianjieai/irita-sdk-go"
+	"github.com/bianjieai/irita-sdk-go/modules/service"
+	sdk "github.com/bianjieai/irita-sdk-go/types"
+	"github.com/bianjieai/irita-sdk-go/types/store"
 )
 
 
@@ -29,7 +29,7 @@ type ServiceClientWrapper struct {
 	KeyName    string
 	Passphrase string
 
-	ServiceClient servicesdk.ServiceClient
+	IritaClient servicesdk.IRITAClient
 }
 
 // NewServiceClientWrapper constructs a new ServiceClientWrapper
@@ -79,7 +79,7 @@ func NewServiceClientWrapper(
 		KeyPath:       keyPath,
 		KeyName:       keyName,
 		Passphrase:    passphrase,
-		ServiceClient: servicesdk.NewServiceClient(config),
+		IritaClient: servicesdk.NewIRITAClient(config),
 	}
 
 	return wrapper
@@ -100,7 +100,7 @@ func MakeServiceClientWrapper(config Config) ServiceClientWrapper {
 // SubscribeServiceRequest wraps service.SubscribeServiceRequest
 func (s ServiceClientWrapper) SubscribeServiceRequest(serviceName string, cb service.RespondCallback) error {
 	baseTx := s.BuildBaseTx()
-	provider, e := s.ServiceClient.QueryAddress(baseTx.From, baseTx.Password)
+	provider, e := s.IritaClient.QueryAddress(baseTx.From, baseTx.Password)
 	if e != nil {
 		return sdk.Wrap(e)
 	}
@@ -111,17 +111,17 @@ func (s ServiceClientWrapper) SubscribeServiceRequest(serviceName string, cb ser
 		sdk.NewCond(eventTypeNewBatchRequestProvider, attributeKeyProvider).EQ(sdk.EventValue(provider.String())),
 	)
 
-	_, err := s.ServiceClient.SubscribeNewBlock(builder, func(block sdk.EventDataNewBlock) {
+	_, err := s.IritaClient.SubscribeNewBlock(builder, func(block sdk.EventDataNewBlock) {
 		msgs := s.GenServiceResponseMsgs(block.ResultEndBlock.Events, serviceName, provider, cb)
 		if msgs == nil || len(msgs) == 0 {
-			s.ServiceClient.Logger().Error("no message created",
+			s.IritaClient.Logger().Error("no message created",
 				"serviceName", serviceName,
 				"provider", provider,
 			)
 		}
 		for _, msg := range msgs {
 			msg := msg.(*service.MsgRespondService)
-			resTx, err := s.ServiceClient.BuildAndSend([]sdk.Msg{msg}, baseTx)
+			resTx, err := s.IritaClient.BuildAndSend([]sdk.Msg{msg}, baseTx)
 			if err != nil {
 				mysql.TxErrCollection(msg.RequestId, err.Error())
 			}else{
@@ -149,7 +149,7 @@ func (s ServiceClientWrapper) GenServiceResponseMsgs(events sdk.StringEvents, se
 			reqIDsStr := attributes.GetValue(attributeKeyRequests)
 			var idsTemp []string
 			if err := json.Unmarshal([]byte(reqIDsStr), &idsTemp); err != nil {
-				s.ServiceClient.Logger().Error(
+				s.IritaClient.Logger().Error(
 					"service request don't exist",
 					attributeKeyRequestID, reqIDsStr,
 					attributeKeyServiceName, serviceName,
@@ -163,9 +163,9 @@ func (s ServiceClientWrapper) GenServiceResponseMsgs(events sdk.StringEvents, se
 	}
 
 	for _, reqID := range ids {
-		request, err := s.ServiceClient.QueryServiceRequest(reqID)
+		request, err := s.IritaClient.Service.QueryServiceRequest(reqID)
 		if err != nil {
-			s.ServiceClient.Logger().Error(
+			s.IritaClient.Logger().Error(
 				"service request don't exist",
 				attributeKeyRequestID, reqID,
 				attributeKeyServiceName, serviceName,
@@ -210,7 +210,7 @@ func (s ServiceClientWrapper) DefineService(
 		Schemas:           schemas,
 	}
 
-	_, err := s.ServiceClient.DefineService(request, s.BuildBaseTx())
+	_, err := s.IritaClient.Service.DefineService(request, s.BuildBaseTx())
 
 	return err
 }
@@ -242,7 +242,7 @@ func (s ServiceClientWrapper) BindService(
 		Provider:    provider,
 	}
 
-	_, err = s.ServiceClient.BindService(request, s.BuildBaseTx())
+	_, err = s.IritaClient.Service.BindService(request, s.BuildBaseTx())
 
 	return err
 }

@@ -9,13 +9,11 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 
-	ethcmn "github.com/ethereum/go-ethereum/common"
-	"github.com/bianjieai/irita-sdk-go/modules/wasm"
-
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/contract-service/opb/config"
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/mysql"
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/server"
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/types"
+	"github.com/bianjieai/irita-sdk-go/modules/wasm"
 )
 
 // ContractService defines the contract service
@@ -68,16 +66,6 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 		res.Message = fmt.Sprintf("can not parse request [%s] input json string : %s", reqID, err.Error())
 		return
 	}
-	contractAddress := ethcmn.HexToAddress(request.Dest.EndpointAddress)
-	requestID, err := hex.DecodeString(request.Header.ReqSequence)
-	if err != nil {
-		res.Code = 400
-		res.Message = fmt.Sprintf("can not decode requestID: %s", err.Error())
-
-		return
-	}
-	var requestIDByte32 [32]byte
-	copy(requestIDByte32[:], requestID)
 
 	chainParams, err := cs.opbClient.ChainManager.GetChainParams(request.Dest.ID)
 	if err != nil {
@@ -100,9 +88,9 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 
 	execAbi := wasm.NewContractABI().
 		WithMethod("call_service").
-		WithArgs("request_id", requestIDByte32).
-		WithArgs("endpoint_address", contractAddress).
-		WithArgs("call_data", request.CallData)
+		WithArgs("request_id", request.ReqSequence).
+		WithArgs("endpoint_address", request.Dest.EndpointAddress).
+		WithArgs("call_data", string(request.CallData))
 	resultTx, err := cs.opbClient.OpbClient.WASM.Execute(chainParams.TargetCoreAddr, execAbi, nil, cs.opbClient.BuildBaseTx())
 	if err != nil {
 		mysql.TxErrCollection(reqID, err.Error())
@@ -111,7 +99,7 @@ func (cs ContractService) Callback(reqCtxID, reqID, input string) (output string
 	}
 	txHash = resultTx.Hash
 
-	err = cs.opbClient.WaitForSuccess(resultTx.Hash, "SetResponse")
+	err = cs.opbClient.WaitForSuccess(resultTx.Hash, "callService")
 	if err != nil {
 		mysql.TxErrCollection(reqID, err.Error())
 		res.Code = 500

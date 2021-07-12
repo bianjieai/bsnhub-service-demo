@@ -54,7 +54,7 @@ func (app *App) Start() {
 func (app *App) DeployIService(schemas string, pricing string) error {
 	app.Logger.Infof("starting to deploy %s service", app.ServiceName)
 
-	_, err := app.IServiceClient.ServiceClient.QueryServiceDefinition(app.ServiceName)
+	_, err := app.IServiceClient.IritaClient.Service.QueryServiceDefinition(app.ServiceName)
 	if err != nil {
 		app.Logger.Infof("defining service")
 
@@ -66,12 +66,12 @@ func (app *App) DeployIService(schemas string, pricing string) error {
 		app.Logger.Infof("service definition already exists")
 	}
 
-	_, provider, err2 := app.IServiceClient.ServiceClient.Find(app.IServiceClient.KeyName, app.IServiceClient.Passphrase)
+	_, provider, err2 := app.IServiceClient.IritaClient.Find(app.IServiceClient.KeyName, app.IServiceClient.Passphrase)
 	if err2 != nil {
 		return err2
 	}
 
-	_, err = app.IServiceClient.ServiceClient.QueryServiceBinding(app.ServiceName, provider.String())
+	_, err = app.IServiceClient.IritaClient.Service.QueryServiceBinding(app.ServiceName, provider.String())
 	if err != nil {
 		app.Logger.Infof("binding service")
 

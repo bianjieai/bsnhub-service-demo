@@ -7,13 +7,14 @@ import (
 	"github.com/bianjieai/bsnhub-service-demo/examples/opb-contract-call-service-provider/server"
 	sdk "github.com/bianjieai/irita-sdk-go"
 	sdktypes "github.com/bianjieai/irita-sdk-go/types"
+	sdkstore "github.com/bianjieai/irita-sdk-go/types/store"
 )
 
 // OpbChain defines the Opb chain
 type OpbChain struct {
-	OpbClient sdk.IRITAClient
-	ChainManager        *server.ChainManager
-	BaseConfig          opbcfg.BaseConfig
+	OpbClient    sdk.IRITAClient
+	ChainManager *server.ChainManager
+	BaseConfig   opbcfg.BaseConfig
 }
 
 // NewOpbChain constructs a new OpbChain instance
@@ -32,6 +33,7 @@ func (opb *OpbChain) BuildBaseTx() sdktypes.BaseTx {
 	return sdktypes.BaseTx{
 		From:     opb.BaseConfig.KeyName,
 		Password: opb.BaseConfig.Passphrase,
+		Mode:     sdktypes.Commit,
 	}
 }
 
@@ -60,11 +62,11 @@ func (f *OpbChain) InstantiateClient(
 	}
 
 	options := []sdktypes.Option{
-		sdktypes.TimeoutOption(config.Timeout),
 		sdktypes.CachedOption(true),
+		sdktypes.KeyDAOOption(sdkstore.NewFileDAO(config.KeyPath)),
 	}
 
-	clientConfig, err := sdktypes.NewClientConfig(rpcAddr, grpcAddr, config.ChainId, options...)
+	clientConfig, err := sdktypes.NewClientConfig(rpcAddr, grpcAddr, config.BaseConfig.ChainId, options...)
 
 	if err != nil {
 		common.Logger.Errorf("failed to get the sdk clientConfig: %s", err)
@@ -77,11 +79,11 @@ func (f *OpbChain) InstantiateClient(
 }
 
 // waitForSuccess waits for the receipt of the given tx
-func (opb *OpbChain) WaitForSuccess(txHash string,name string) error {
+func (opb *OpbChain) WaitForSuccess(txHash string, name string) error {
 	common.Logger.Infof("%s: transaction sent to %s, hash: %s", name, opb.BaseConfig.ChainId, txHash)
 
-	tx, _:= opb.OpbClient.QueryTx(txHash)
-	if tx.Result.Code != 0{
+	tx, _ := opb.OpbClient.QueryTx(txHash)
+	if tx.Result.Code != 0 {
 		return fmt.Errorf("transaction %s execution failed: %s", txHash, tx.Result.Log)
 	}
 
