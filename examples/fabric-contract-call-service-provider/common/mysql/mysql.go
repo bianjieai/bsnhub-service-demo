@@ -183,3 +183,43 @@ func CreateTable(sql string, tabName string) {
 	common.Logger.Info(id, rows)
 
 }
+
+
+func TableColumnIsExit(tableName,columnName string)  bool {
+
+	sqlstr := fmt.Sprintf("SELECT table_name FROM information_schema.COLUMNS WHERE table_name = '%s' and COLUMN_NAME = '%s'", tableName,columnName)
+
+	exit := func(rows *sql.Rows) (interface{}, error) {
+		var table_name string
+		rows.Scan(&table_name)
+
+		return table_name, nil
+	}
+
+	list, err := Query(exit, sqlstr)
+
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	if len(list) > 0 {
+
+		fmt.Println(list[0])
+		//return list[0].(int64)>0,nil
+		return list[0] == tableName
+	} else {
+		return false
+	}
+}
+
+
+func AlterTable(sql string, tabName string) {
+
+	id, rows, err := Exec(sql)
+	if err != nil {
+		common.Logger.Error(err)
+	}
+	common.Logger.Infof("数据库已修改:%s", tabName)
+	common.Logger.Info(id, rows)
+
+}
