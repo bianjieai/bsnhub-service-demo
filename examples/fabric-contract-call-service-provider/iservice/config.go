@@ -24,7 +24,7 @@ var (
 )
 
 const (
-	Prefix       = "hub"
+	Prefix       = "iservice"
 	ChainID      = "chain_id"
 	NodeRPCAddr  = "node_rpc_addr"
 	NodeGRPCAddr = "node_grpc_addr"
