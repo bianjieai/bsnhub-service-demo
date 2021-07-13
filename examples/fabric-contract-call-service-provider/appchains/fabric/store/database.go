@@ -40,6 +40,9 @@ const (
   createTime datetime NOT NULL DEFAULT '1999-01-01 00:00:00',
   PRIMARY KEY (Id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;`
+
+	_AlterTable_ColName = "targetChaincodeName"
+	_AlterTable_Varchar_Sql = `alter table %s add COLUMN %s VARCHAR(225) DEFAULT NULL;`
 )
 
 func InitMysql(conn string) {
@@ -47,6 +50,7 @@ func InitMysql(conn string) {
 	mysql.Init(conn)
 	checkTable(_Ccreate_Provider_Sql, _TabName_Provider)
 	checkTable(_Create_CrossChain_Tx_Sql, _TabName_cc_Tx)
+	checkColumn(_AlterTable_Varchar_Sql,_TabName_Provider,_AlterTable_ColName)
 }
 
 func checkTable(sql, tabName string) {
@@ -59,5 +63,19 @@ func checkTable(sql, tabName string) {
 	} else {
 		common.Logger.Info("数据库不存在:", tabName)
 		mysql.CreateTable(sql, tabName)
+	}
+}
+
+
+func checkColumn(sql,tabName,columnName string)  {
+	sql = fmt.Sprintf(sql,tabName,columnName)
+
+	common.Logger.Infof("检查数据库 %s 字段 %s", tabName,columnName)
+	if mysql.TableColumnIsExit(tabName,columnName) {
+		common.Logger.Infof("数据库 %s 已存在字段 %s", tabName,columnName)
+	}else {
+		common.Logger.Infof("数据库 %s 不存在字段 %s，开始修改", tabName,columnName)
+		common.Logger.Infof("SQL: %s",sql)
+		mysql.AlterTable(sql, tabName)
 	}
 }
