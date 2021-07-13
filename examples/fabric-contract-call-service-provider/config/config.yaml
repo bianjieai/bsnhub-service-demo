@@ -9,7 +9,7 @@ service:
   service_name: cc-contract-call
 
 # irita-hub config
-hub:
+iservice:
   chain_id: irita
   node_rpc_addr: http://127.0.0.1:26657
   node_grpc_addr: 127.0.0.1:9090
